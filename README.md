@@ -13,6 +13,12 @@ persist if the virtual instance is ever destroyed and re-created.
  
 * `ansible`
 
+## Fetching Ansible Galaxy playbook dependencies
+
+Use the [ansible-galaxy](http://docs.ansible.com/galaxy.html#advanced-control-over-role-requirements-files) command to install third-party playbooks:
+
+`ansible-galaxy install -r requirements.yml`
+
 ## Testing
 
 A [vagrant](https://www.vagrantup.com/) file has been provided for local testing it can be brought up by running:
