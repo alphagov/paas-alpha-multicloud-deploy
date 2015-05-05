@@ -32,3 +32,7 @@ A [vagrant](https://www.vagrantup.com/) file has been provided for local testing
 Where:
 
 <PROVIDER_NAME> is: aws or gce
+
+## Known bugs
+
+* When editing dsl/config.xml and re-running Ansible it looks like the template job changes but not the Terraform job.
