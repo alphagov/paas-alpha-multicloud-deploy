@@ -25,6 +25,12 @@ A [vagrant](https://www.vagrantup.com/) file has been provided for local testing
 
 `vagrant up --provision`
 
+There is also a helper [Makefile](https://www.gnu.org/software/make/manual/make.html#Introduction) in the base directory of this project 
+that will automatically bring up the environment by running:
+
+`make` and browsing to `http://127.0.0.1:8080`
+
+
 ## Deploying
 
 `ansible-playbook -i inventory.<PROVIDER_NAME> site.yml` 
