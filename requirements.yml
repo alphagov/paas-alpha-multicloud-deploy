@@ -1,0 +1,6 @@
+# vim:ft=ansible:
+
+## from galaxy
+
+- src: geerlingguy.jenkins
+  version: 1.2.3
