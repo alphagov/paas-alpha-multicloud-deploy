@@ -28,17 +28,28 @@ A [vagrant](https://www.vagrantup.com/) file has been provided for local testing
 There is also a helper [Makefile](https://www.gnu.org/software/make/manual/make.html#Introduction) in the base directory of this project 
 that will automatically bring up the environment by running:
 
-`make` and browsing to `http://127.0.0.1:8080`
+`make vagrant` and browsing to `http://127.0.0.1:8080`
 
+## Preparation
 
-## Deploying
+For deployment on aws, you must have the following environment variables set:
 
-`ansible-playbook -i inventory.<PROVIDER_NAME> site.yml` 
+* AWS_ACCESS_KEY
+* AWS_SECRET_KEY
+
+## Deployment
+
+`ansible-playbook -i localhost, <PROVIDER_NAME>-provision.yml -v`
+`ansible-playbook -i ec2.py site.yml -v`
+
+Or:
+
+`make <PROVIDER_NAME>`
 
 Where:
 
 <PROVIDER_NAME> is: aws or gce
 
-## Known bugs
+## Known bugs/issues
 
-* None
+* At this moment, only the 'aws' platform is supported

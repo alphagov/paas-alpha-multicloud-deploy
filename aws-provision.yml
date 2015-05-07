@@ -1,0 +1,76 @@
+---
+- name: Provision a tooling infrastructure and Jenkins instance on AWS
+  hosts: all
+  connection: local
+  gather_facts: false
+  tasks:
+  - name: create a tooling VPC
+    ec2_vpc:
+      state: present
+      wait : yes
+      cidr_block: 172.72.0.0/16
+      resource_tags: { "Name":"tooling vpc" }
+      subnets:
+        - cidr: 172.72.1.0/24
+          az: eu-west-1c
+      internet_gateway: True
+      route_tables:
+        - subnets:
+            - 172.72.1.0/24
+          routes:
+            - dest: 0.0.0.0/0
+              gw: igw
+      region: eu-west-1
+    register: vpc
+  - name: create security group
+    ec2_group:
+      name: toolingaccess
+      description: an example EC2 group
+      vpc_id: "{{ vpc.vpc.id }}"
+      region: eu-west-1
+      rules:
+        - proto: tcp
+          from_port: 22
+          to_port: 22
+          cidr_ip: 80.194.77.90/32
+        - proto: tcp
+          from_port: 22
+          to_port: 22
+          cidr_ip: 80.194.77.100/32
+        - proto: tcp
+          from_port: 443
+          to_port: 443
+          cidr_ip: 80.194.77.90/32
+        - proto: tcp
+          from_port: 443
+          to_port: 443
+          cidr_ip: 80.194.77.100/32
+        - proto: tcp
+          from_port: 8080
+          to_port: 8080
+          cidr_ip: 80.194.77.90/32
+        - proto: tcp
+          from_port: 8080
+          to_port: 8080
+          cidr_ip: 80.194.77.100/32
+    register: secgroup
+  - name: provision an instance for jenkins
+    ec2:
+      key_name: "{{ ssh_key_name }}"
+      group_id: "{{ secgroup.group_id }}"
+      instance_type: t2.medium
+      image: "{{ ami_id }}"
+      assign_public_ip: yes
+      vpc_subnet_id: "{{ vpc.subnets[0].id }}"
+      region: eu-west-1
+      exact_count: 1
+      count_tag:
+        Name: jenkins-master
+      source_dest_check: no
+      instance_tags:
+        Name: jenkins-master
+      wait : yes
+    register: ec2
+  - name: wait for Jenkins instance to be ready
+    wait_for: host="{{ ec2.tagged_instances[0].public_ip }}" port=22 delay=5 timeout=360 state=started
+    with_items: ec2.tagged_instances
