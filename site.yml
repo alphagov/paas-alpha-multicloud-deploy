@@ -1,0 +1,39 @@
+# vim:ft=ansible:
+---
+# Bring up jenkins ci master server.
+- hosts: jenkins-master
+  sudo: yes
+  roles:
+    - geerlingguy.jenkins
+  vars:
+    jenkins_plugins:
+      - git
+      - ssh
+      - job-dsl
+  tasks:
+    - name: install required packages
+      action: apt pkg={{item}} state=installed
+      with_items:
+        - git
+        - unzip
+    - name: download terraform
+      get_url: url=https://dl.bintray.com/mitchellh/terraform/terraform_0.4.2_linux_amd64.zip dest=/tmp/terraform.zip mode=0440
+      notify:
+        - unzip terraform.zip to /usr/local/bin
+    - name: copy default dsl seed config.xml to jenkins master
+      copy: src=dsl/config.xml dest=/tmp/config.xml owner=jenkins group=jenkins mode=0644
+    - name: create default dsl seed job
+      shell: "curl -X POST 'http://127.0.0.1:8080/createItem?name=default-dsl-job' --data-binary '@config.xml' -H 'Content-Type: text/xml'"
+      args:
+        chdir: /tmp/
+    - name: create jenkins seed job directory structure
+      copy: src=jobs dest=/var/lib/jenkins/jobs/default-dsl-job/workspace directory_mode=0750 mode=0640 owner=jenkins group=jenkins
+    - name: generate jenkins job from dsl seed job
+      uri: url='http://127.0.0.1:8080/job/default-dsl-job/build'
+        method=POST 
+        status_code=201
+  handlers:
+    - name: unzip terraform.zip to /usr/local/bin 
+      unarchive: src=/tmp/terraform.zip dest=/usr/local/bin copy=no
+
+
