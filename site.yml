@@ -16,6 +16,9 @@
       with_items:
         - git
         - unzip
+        - python-pip
+    - name: ensure necessary package for uri checking is available
+      pip: name=httplib2
     - name: download terraform
       get_url: url=https://dl.bintray.com/mitchellh/terraform/terraform_0.4.2_linux_amd64.zip dest=/tmp/terraform.zip mode=0440
       notify:
