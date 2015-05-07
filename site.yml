@@ -1,7 +1,7 @@
 # vim:ft=ansible:
 ---
 # Bring up jenkins ci master server.
-- hosts: jenkins-master
+- hosts: all
   sudo: yes
   roles:
     - geerlingguy.jenkins
