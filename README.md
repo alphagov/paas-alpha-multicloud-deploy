@@ -6,6 +6,9 @@ service that will be used to continuous deploy our [Tsuru](https://tsuru.io/) [e
 This project uses the [Jenkins Job DSL](https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin) to define a job
 as code and store that job using a version management system. 
 
+This project implements the use of an [ansible dynamic inventory](https://aws.amazon.com/blogs/apn/getting-started-with-ansible-and-dynamic-amazon-ec2-inventory-management/) 
+Script and configuration file used for dynamic inventory on aws (ec2.py and ec2.ini) are part of [ansible plugins](https://github.com/ansible/ansible/tree/devel/plugins/inventory)
+
 No changes should be made to the jenkins server manually as they will not
 persist if the virtual instance is ever destroyed and re-created.
 
@@ -34,12 +37,13 @@ that will automatically bring up the environment by running:
 
 For deployment on aws, you must have the following environment variables set:
 
-* AWS_ACCESS_KEY
-* AWS_SECRET_KEY
+* [AWS_ACCESS_KEY](http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/set-up-ec2-cli-linux.html)
+* [AWS_SECRET_KEY](http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/set-up-ec2-cli-linux.html)
 
 ## Deployment
 
 `ansible-playbook -i localhost, <PROVIDER_NAME>-provision.yml -v`
+
 `ansible-playbook -i ec2.py site.yml -v`
 
 Or:
