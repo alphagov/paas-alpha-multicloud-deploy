@@ -5,6 +5,9 @@
   sudo: yes
   roles:
     - geerlingguy.jenkins
+  pre_tasks:
+    - name: install snake oil ssl certificates
+      apt: name=ssl-cert state=present
   vars:
     jenkins_plugins:
       - git
