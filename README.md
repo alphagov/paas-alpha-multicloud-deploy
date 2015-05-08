@@ -6,6 +6,9 @@ service that will be used to continuous deploy our [Tsuru](https://tsuru.io/) [e
 This project uses the [Jenkins Job DSL](https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin) to define a job
 as code and store that job using a version management system. 
 
+This project implements the use of an [ansible dynamic inventory](https://aws.amazon.com/blogs/apn/getting-started-with-ansible-and-dynamic-amazon-ec2-inventory-management/) 
+Script and configuration file used for dynamic inventory on aws (ec2.py and ec2.ini) are part of [ansible plugins](https://github.com/ansible/ansible/tree/devel/plugins/inventory)
+
 No changes should be made to the jenkins server manually as they will not
 persist if the virtual instance is ever destroyed and re-created.
 
@@ -28,17 +31,29 @@ A [vagrant](https://www.vagrantup.com/) file has been provided for local testing
 There is also a helper [Makefile](https://www.gnu.org/software/make/manual/make.html#Introduction) in the base directory of this project 
 that will automatically bring up the environment by running:
 
-`make` and browsing to `http://127.0.0.1:8080`
+`make vagrant` and browsing to `http://127.0.0.1:8080`
 
+## Preparation
 
-## Deploying
+For deployment on aws, you must have the following environment variables set:
 
-`ansible-playbook -i inventory.<PROVIDER_NAME> site.yml` 
+* [AWS_ACCESS_KEY_ID](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-environment)
+* [AWS_SECRET_ACCESS_KEY](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-environment)
+
+## Deployment
+
+`ansible-playbook -i localhost, <PROVIDER_NAME>-provision.yml -v`
+
+`ansible-playbook -i ec2.py site.yml -v`
+
+Or:
+
+`make <PROVIDER_NAME>`
 
 Where:
 
 <PROVIDER_NAME> is: aws or gce
 
-## Known bugs
+## Known bugs/issues
 
-* None
+* At this moment, only the 'aws' platform is supported
