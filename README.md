@@ -37,8 +37,8 @@ that will automatically bring up the environment by running:
 
 For deployment on aws, you must have the following environment variables set:
 
-* [AWS_ACCESS_KEY](http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/set-up-ec2-cli-linux.html)
-* [AWS_SECRET_KEY](http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/set-up-ec2-cli-linux.html)
+* [AWS_ACCESS_KEY_ID](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-environment)
+* [AWS_SECRET_ACCESS_KEY](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-environment)
 
 ## Deployment
 
