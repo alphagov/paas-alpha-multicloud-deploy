@@ -15,7 +15,7 @@ Vagrant.configure(2) do |config|
     v.vmx["memsize"] = MEMORY_DEFAULT
   end
 
-  config.vm.network "forwarded_port", guest: 8080, host: 8080, auto_correct: true
+  config.vm.network "forwarded_port", guest: 443, host: 8443, auto_correct: true
 
   config.vm.provision :shell, inline: "apt-get purge -qq -y --auto-remove chef puppet"
   config.vm.provision :ansible do |ansible|
