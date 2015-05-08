@@ -4,3 +4,5 @@
 
 - src: geerlingguy.jenkins
   version: 1.2.3
+- src: jdauphant.nginx
+  version: v1.3.4
