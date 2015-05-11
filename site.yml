@@ -5,11 +5,38 @@
   sudo: yes
   roles:
     - geerlingguy.jenkins
+    - jdauphant.nginx
+  pre_tasks:
+    - name: install snake oil ssl certificates
+      apt: name=ssl-cert state=present
   vars:
     jenkins_plugins:
       - git
       - ssh
       - job-dsl
+    nginx_sites:
+      ssl_reverse_proxy:
+        - listen 443 ssl
+        - ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem
+        - ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key
+        - server_name jenkins.tooling.paas.alphagov.co.uk
+        - location / {
+          proxy_pass http://localhost:8080;
+          proxy_redirect default;
+          proxy_redirect http://$host/ https://$host/;
+          proxy_redirect http://$hostname/ https://$host/;
+          proxy_read_timeout 15s;
+          proxy_connect_timeout 15s;
+          }
+      default:
+        - listen 80
+        - return 301 https://$host$request_uri
+    nginx_configs:
+      proxy:
+        - proxy_set_header Host $http_host
+        - proxy_set_header X-Real-IP  $remote_addr
+        - proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for
+        - proxy_set_header X-Forwarded-Proto https
   tasks:
     - name: install required packages
       action: apt pkg={{item}} state=installed
