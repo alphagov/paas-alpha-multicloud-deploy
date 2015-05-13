@@ -54,6 +54,11 @@
       get_url: url=https://dl.bintray.com/mitchellh/terraform/terraform_0.4.2_linux_amd64.zip dest=/tmp/terraform.zip mode=0440
       notify:
         - unzip terraform.zip to /usr/local/bin
+    - name: Update java keystore with github certificate
+      copy: content="{{ github_cert }}" dest=~/{{ github_hostname }}.crt
+      when: github_cert is defined
+      notify:
+        - import certificate into java keystore
     - name: copy default dsl seed config.xml to jenkins master
       copy: src=dsl/config.xml dest=/tmp/config.xml owner=jenkins group=jenkins mode=0644
     - name: create default dsl seed job
@@ -69,5 +74,6 @@
   handlers:
     - name: unzip terraform.zip to /usr/local/bin 
       unarchive: src=/tmp/terraform.zip dest=/usr/local/bin copy=no
-
+    - name: import certificate into java keystore
+      shell: "keytool -import -alias {{ github_hostname }} -keystore {{ java_home }}/lib/security/cacerts -file ~/{{ github_hostname }}.crt -storepass {{ keystore_password }} -noprompt"
 
