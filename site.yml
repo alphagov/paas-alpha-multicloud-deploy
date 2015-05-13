@@ -15,6 +15,9 @@
       - git
       - ssh
       - job-dsl
+      - github-api
+      - github-oauth
+      - role-strategy
     nginx_sites:
       ssl_reverse_proxy:
         - listen 443 ssl
