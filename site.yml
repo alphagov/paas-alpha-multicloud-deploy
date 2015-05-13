@@ -6,6 +6,7 @@
   roles:
     - geerlingguy.jenkins
     - jdauphant.nginx
+    - openconnect
   pre_tasks:
     - name: install snake oil ssl certificates
       apt: name=ssl-cert state=present
