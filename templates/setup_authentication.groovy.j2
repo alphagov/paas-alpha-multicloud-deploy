@@ -1,0 +1,32 @@
+import hudson.*
+import hudson.security.*
+import com.michelin.cio.hudson.plugins.rolestrategy.*
+import org.jenkinsci.plugins.*
+
+def instance = Jenkins.getInstance()
+def strategy = new RoleBasedAuthorizationStrategy()
+def GithubRealm = new GithubSecurityRealm("{{ github_web_uri }}","{{ github_api_uri }}","{{ client_id }}","{{ client_secret }}")
+instance.setSecurityRealm(GithubRealm)
+
+{% for role in permissions %}
+  // Create {{ role }} role
+  Set<Permission> {{ role }}_permissions = new HashSet<Permission>();
+{% for permission in permissions[role] %}
+  {{ role }}_permissions.add(Permission.fromId("{{ permission }}"));
+{% endfor %}
+
+  Role {{ role }} = new Role("{{ role }}", {{ role }}_permissions);
+  strategy.addRole("globalRoles", {{ role }});
+
+{% endfor %}
+
+  // Add users to roles
+{% for role in roles %}
+{% for member in roles[role] %}
+  strategy.assignRole("globalRoles", {{ role }}, "{{ member }}");
+{% endfor %}
+{% endfor %}
+ 
+instance.setAuthorizationStrategy(strategy)
+instance.save()
+println "Successfully configured auth strategies and roles"
