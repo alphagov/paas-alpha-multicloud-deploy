@@ -1,7 +1,13 @@
 job {
   name 'terraform-help'
   scm {
-    git('https://github.com/alphagov/tsuru-terraform.git','master')
+    git {
+      remote {
+	url('https://github.com/alphagov/tsuru-terraform.git')
+      }
+      branch('master')
+      createTag(false)
+    }
   }
   steps {
     shell('terraform --help || true')
