@@ -92,6 +92,34 @@ This repository is using `ansible-vault` to secure sensitive information - If yo
 
 Encrypt your vault file using `ansible-vault encrypt group_vars/all/vault`
 
+As an example your `vault` could contain the following variables that you may wish to keep secret:
+
+```
+vpn_url: "https://my.ssl.vpn.uri"
+vpn_user: "my.vpn.user"
+vpn_password: "my.vpn.password"
+
+github_web_uri: "https://github.com"
+github_api_uri: "https://github.com/api/v3"
+client_id: "my.github.client.id"
+client_secret: "my.github.client.secret"
+github_hostname: "github.com"
+
+jenkins_admin_user: "janedoe"
+jenkins_api_token: "my.jenkins.api.token"
+
+roles:
+  admins:
+    - janedoe
+  github_orgs:
+    - my-github-org
+
+keystore_password: "my.java.keystore.password"
+github_cert: |
+  -----BEGIN CERTIFICATE-----
+  -----END CERTIFICATE-----
+```
+
 ## Deployment
 
 `ansible-playbook -i localhost, <PROVIDER_NAME>-provision.yml -v --vault-password-file vault_password.sh`
