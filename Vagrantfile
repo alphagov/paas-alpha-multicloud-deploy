@@ -19,6 +19,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision :shell, inline: "apt-get purge -qq -y --auto-remove chef puppet"
   config.vm.provision :ansible do |ansible|
+    ansible.extra_vars = { vagrant: true }
     ansible.groups = { "jenkins-master" => ["default"] }
     ansible.playbook = "site.yml"
     ansible.ask_vault_pass = true

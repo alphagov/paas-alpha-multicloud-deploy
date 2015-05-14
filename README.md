@@ -37,6 +37,11 @@ that will automatically bring up the environment by running:
 
 `make vagrant` and browsing to `https://127.0.0.1:8443`
 
+The `vagrant` provisioning run does not configure the following items:
+
+* `Openconnect VPN client` - since this would make the vagrant instance unreachable,
+* [GitHub authentication strategy](https://wiki.jenkins-ci.org/display/JENKINS/Github+OAuth+Plugin) - since this would make the jenkins site unconfigurable.
+
 ## Preparation
 
 For deployment on aws, you must have the following environment variables set:

@@ -6,7 +6,7 @@
   roles:
     - geerlingguy.jenkins
     - jdauphant.nginx
-    - openconnect
+    - { role: openconnect, when: vagrant is not defined }
   pre_tasks:
     - name: install snake oil ssl certificates
       apt: name=ssl-cert state=present
@@ -81,6 +81,8 @@
       unarchive: src=/tmp/terraform.zip dest=/usr/local/bin copy=no
     - name: import certificate into java keystore
       shell: "keytool -import -alias {{ github_hostname }} -keystore {{ java_home }}/lib/security/cacerts -file ~/{{ github_hostname }}.crt -storepass {{ keystore_password }} -noprompt"
+      when: vagrant is not defined
     - name: setup jenkins authentication
       shell: "curl 'http://127.0.0.1:8080/scriptText' -d \"script=$(cat ~/setup_authentication.groovy)\" -k $(cat ~/jenkins_auth)"
+      when: vagrant is not defined
 
