@@ -94,9 +94,9 @@ Encrypt your vault file using `ansible-vault encrypt group_vars/all/vault`
 
 ## Deployment
 
-`ansible-playbook -i localhost, <PROVIDER_NAME>-provision.yml -v`
+`ansible-playbook -i localhost, <PROVIDER_NAME>-provision.yml -v --vault-password-file vault_password.sh`
 
-`ansible-playbook -i ec2.py site.yml -v`
+`ansible-playbook -i ec2.py site.yml -v --vault-password-file vault_password.sh`
 
 Or:
 
