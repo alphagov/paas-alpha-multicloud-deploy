@@ -20,6 +20,11 @@ The Jenkins server is configured to use [GitHub authorization](https://wiki.jenk
  
 * `ansible`
 
+* Python things (you may wish to use [virtualenv](https://virtualenv.pypa.io/en/latest/)):
+```
+pip install -Ur requirements.txt
+```
+
 ## Fetching Ansible Galaxy playbook dependencies
 
 Use the [ansible-galaxy](http://docs.ansible.com/galaxy.html#advanced-control-over-role-requirements-files) command to install third-party playbooks:
