@@ -6,3 +6,6 @@
   version: 1.2.3
 - src: jdauphant.nginx
   version: v1.3.4
+- src: https://github.com/alphagov/ansible-role-openconnect.git
+  version: "0.1"
+  name: openconnect

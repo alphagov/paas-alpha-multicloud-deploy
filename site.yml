@@ -6,6 +6,7 @@
   roles:
     - geerlingguy.jenkins
     - jdauphant.nginx
+    - { role: openconnect, when: vagrant is not defined }
   pre_tasks:
     - name: install snake oil ssl certificates
       apt: name=ssl-cert state=present
@@ -14,6 +15,9 @@
       - git
       - ssh
       - job-dsl
+      - github-api
+      - github-oauth
+      - role-strategy
     nginx_sites:
       ssl_reverse_proxy:
         - listen 443 ssl
@@ -44,26 +48,41 @@
         - git
         - unzip
         - python-pip
-    - name: ensure necessary package for uri checking is available
-      pip: name=httplib2
     - name: download terraform
       get_url: url=https://dl.bintray.com/mitchellh/terraform/terraform_0.4.2_linux_amd64.zip dest=/tmp/terraform.zip mode=0440
       notify:
         - unzip terraform.zip to /usr/local/bin
+    - name: configure jenkins token
+      copy: content="-u {{ jenkins_admin_user }}:{{ jenkins_api_token }}" dest=~/jenkins_auth
+      when: jenkins_admin_user is defined and jenkins_api_token is defined
+      notify:
+        - setup jenkins authentication
+    - name: render jenkins authentication configuration script
+      template: dest=~/setup_authentication.groovy src=templates/setup_authentication.groovy.j2
+      notify:
+        - setup jenkins authentication
+    - name: Update java keystore with github certificate
+      copy: content="{{ github_cert }}" dest=~/{{ github_hostname }}.crt
+      when: github_cert is defined
+      notify:
+        - import certificate into java keystore
     - name: copy default dsl seed config.xml to jenkins master
       copy: src=dsl/config.xml dest=/tmp/config.xml owner=jenkins group=jenkins mode=0644
     - name: create default dsl seed job
-      shell: "curl -X POST 'http://127.0.0.1:8080/createItem?name=default-dsl-job' --data-binary '@config.xml' -H 'Content-Type: text/xml'"
+      shell: "curl -X POST 'http://127.0.0.1:8080/createItem?name=default-dsl-job' --data-binary '@config.xml' -H 'Content-Type: text/xml' -k $(cat ~/jenkins_auth)"
       args:
         chdir: /tmp/
     - name: create jenkins seed job directory structure
       copy: src=jobs dest=/var/lib/jenkins/jobs/default-dsl-job/workspace directory_mode=0750 mode=0640 owner=jenkins group=jenkins
     - name: generate jenkins job from dsl seed job
-      uri: url='http://127.0.0.1:8080/job/default-dsl-job/build'
-        method=POST 
-        status_code=201
+      shell: "curl -X POST 'http://127.0.0.1:8080/job/default-dsl-job/build' -k $(cat ~/jenkins_auth)"
   handlers:
     - name: unzip terraform.zip to /usr/local/bin 
       unarchive: src=/tmp/terraform.zip dest=/usr/local/bin copy=no
-
+    - name: import certificate into java keystore
+      shell: "keytool -import -alias {{ github_hostname }} -keystore {{ java_home }}/lib/security/cacerts -file ~/{{ github_hostname }}.crt -storepass {{ keystore_password }} -noprompt"
+      when: vagrant is not defined
+    - name: setup jenkins authentication
+      shell: "curl 'http://127.0.0.1:8080/scriptText' -d \"script=$(cat ~/setup_authentication.groovy)\" -k $(cat ~/jenkins_auth)"
+      when: vagrant is not defined
 

@@ -15,7 +15,7 @@ vagrant-up:
 aws: aws-provision ansible-galaxy site
 
 aws-provision: 
-	ansible-playbook -i localhost, aws-provision.yml -v
+	ansible-playbook -i localhost, aws-provision.yml -v --ask-vault-pass
 
 site: 
-	ansible-playbook -i ec2.py site.yml -v
+	ansible-playbook -i ec2.py site.yml -v --ask-vault-pass
