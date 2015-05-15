@@ -124,6 +124,12 @@ github_cert: |
   -----BEGIN CERTIFICATE-----
   -----END CERTIFICATE-----
 ```
+=======
+## DNS
+
+### AWS
+
+If you use AWS [Route53](http://aws.amazon.com/route53/) as a DNS provider you can define `r53_zone` and `dns_name` variables. A `{{dns_name}}.{{r53_zone}}` DNS record will be created/updated for the Jenkins server and set to it's external IP.
 
 ## Deployment
 
