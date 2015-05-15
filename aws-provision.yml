@@ -74,3 +74,13 @@
   - name: wait for Jenkins instance to be ready
     wait_for: host="{{ ec2.tagged_instances[0].public_ip }}" port=22 delay=5 timeout=360 state=started
     with_items: ec2.tagged_instances
+  - name: update Route53 DNS record
+    route53:
+      command: create
+      overwrite: yes
+      zone: "{{ r53_zone }}"
+      record: "{{ dns_name }}.{{ r53_zone }}"
+      ttl: 60
+      type: A
+      value: "{{ ec2.tagged_instances[0].public_ip }}"
+    when: r53_zone is defined and dns_name is defined
