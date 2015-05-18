@@ -129,7 +129,7 @@ github_cert: |
 
 ### AWS
 
-If you use AWS [Route53](http://aws.amazon.com/route53/) as a DNS provider you can define `r53_zone` and `dns_name` variables. A `{{dns_name}}.{{r53_zone}}` DNS record will be created/updated for the Jenkins server and set to it's external IP.
+You can define `public_eip` variable to set the external IP of the server to the [Elastic IP](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html) address you have allocated previously. If you use AWS [Route53](http://aws.amazon.com/route53/) as a DNS provider you can define `r53_zone` and `dns_name` variables. A `{{dns_name}}.{{r53_zone}}` DNS record will be created/updated for the Jenkins server and set to its external IP.
 
 ## Deployment
 

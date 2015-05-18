@@ -74,6 +74,17 @@
   - name: wait for Jenkins instance to be ready
     wait_for: host="{{ ec2.tagged_instances[0].public_ip }}" port=22 delay=5 timeout=360 state=started
     with_items: ec2.tagged_instances
+  - name: assign fixed EIP to jenkins
+    ec2_eip:
+      public_ip: "{{ public_eip }}"
+      state: present
+      region: eu-west-1
+      instance_id: "{{ ec2.tagged_instances[0].id }}"
+    when: public_eip is defined
+  - name: wait for EIP association
+    wait_for: host="{{ public_eip }}" port=22 delay=5 timeout=360 state=started
+    with_items: ec2.tagged_instances
+    when: public_eip is defined
   - name: update Route53 DNS record
     route53:
       command: create
