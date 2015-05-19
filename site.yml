@@ -18,6 +18,7 @@
       - github-api
       - github-oauth
       - role-strategy
+      - ansicolor
     nginx_sites:
       ssl_reverse_proxy:
         - listen 443 ssl
@@ -61,7 +62,7 @@
       template: dest=~/setup_authentication.groovy src=templates/setup_authentication.groovy.j2
       notify:
         - setup jenkins authentication
-    - name: Update java keystore with github certificate
+    - name: update java keystore with github certificate
       copy: content="{{ github_cert }}" dest=~/{{ github_hostname }}.crt
       when: github_cert is defined
       notify:
@@ -76,6 +77,23 @@
       copy: src=jobs dest=/var/lib/jenkins/jobs/default-dsl-job/workspace directory_mode=0750 mode=0640 owner=jenkins group=jenkins
     - name: generate jenkins job from dsl seed job
       shell: "curl -X POST 'http://127.0.0.1:8080/job/default-dsl-job/build' -k $(cat ~/jenkins_auth)"
+    - name: create jenkins .ssh directory
+      file: path=/var/lib/jenkins/.ssh state=directory mode=0775 owner="jenkins"
+    - name: deploy deployer keys
+      copy:
+        content: "{{ deployer_key['key'] }}"
+        dest: /var/lib/jenkins/.ssh/{{ deployer_key['name'] }}
+        mode: 0600
+        owner: "jenkins"
+      when: deployer_key is defined
+      notify:
+        - generate pub key
+    - name: deploy gce credentials
+      template: src=templates/gce_account.json.j2 dest=/var/lib/jenkins/.account.json
+      when: gce_account is defined
+    - name: deploy aws credentials
+      copy: content="{{ aws_credentials }}" dest=/var/lib/jenkins/.aws_credentials
+      when: aws_credentials is defined
   handlers:
     - name: unzip terraform.zip to /usr/local/bin 
       unarchive: src=/tmp/terraform.zip dest=/usr/local/bin copy=no
@@ -85,4 +103,8 @@
     - name: setup jenkins authentication
       shell: "curl 'http://127.0.0.1:8080/scriptText' -d \"script=$(cat ~/setup_authentication.groovy)\" -k $(cat ~/jenkins_auth)"
       when: vagrant is not defined
+    - name: generate pub key
+      shell: "ssh-keygen -y -f /var/lib/jenkins/.ssh/{{ deployer_key['name'] }} \
+> /var/lib/jenkins/.ssh/{{ deployer_key['name'] }}.pub \
+&& chown jenkins:jenkins /var/lib/jenkins/.ssh/{{ deployer_key['name'] }}.pub"
 
