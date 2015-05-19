@@ -124,7 +124,35 @@ github_cert: |
   -----BEGIN CERTIFICATE-----
   -----END CERTIFICATE-----
 ```
-=======
+
+## Credentials
+
+Some of the jobs we deploy require our AWS and [GCE](https://cloud.google.com/compute/) credentials along with the ssh keys. We deploy these to standard locations (jenkins home and ~/.ssh). The variables are optional - credentials will only get deployed when you define:
+* `aws_credentials` - AWS credentials in a form of shell include 
+* `gce_account` - google compute engine account.json file
+* `deployer_key:`- deployer key with elements: `name:` - name of the key and `key:` - the key itself
+
+For example:
+```
+aws_credentials: |
+  export aws_access_key="mykey"
+  export aws_secret_key="mysecret"
+gce_account: |
+  {
+    "private_key_id": "deadb33f",
+    "private_key": "-----BEGIN PRIVATE KEY-----lotsofasciigibberish-----END PRIVATE KEY-----\n",
+    "client_email": "someuuid@developer.gserviceaccount.com",
+    "client_id": "someuuid.apps.googleusercontent.com",
+    "type": "service_account"
+  }
+deployer_key:
+  name: "my-deployer"
+  key: |
+    -----BEGIN RSA PRIVATE KEY-----
+	yourkeyhere
+    -----END RSA PRIVATE KEY-----
+```
+
 ## DNS
 
 ### AWS
