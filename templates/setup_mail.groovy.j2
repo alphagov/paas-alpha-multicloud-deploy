@@ -1,0 +1,15 @@
+import jenkins.model.*
+
+// Configure admin mail
+def jenkinsLocationConfiguration = JenkinsLocationConfiguration.get()
+jenkinsLocationConfiguration.setAdminAddress("{{ jenkins_mail_name }} <{{ jenkins_mail }}>")
+jenkinsLocationConfiguration.save()
+
+// Configure mail server
+def inst = Jenkins.getInstance()
+def desc = inst.getDescriptor("hudson.tasks.Mailer")
+
+desc.setSmtpHost("{{ smtp_server }}")
+desc.save()
+
+println "Successfully configured email address and smtp server"
