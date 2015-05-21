@@ -71,9 +71,6 @@
         Name: jenkins-master
       wait : yes
     register: ec2
-  - name: wait for Jenkins instance to be ready
-    wait_for: host="{{ ec2.tagged_instances[0].public_ip }}" port=22 delay=5 timeout=360 state=started
-    with_items: ec2.tagged_instances
   - name: assign fixed EIP to jenkins
     ec2_eip:
       public_ip: "{{ public_eip }}"
@@ -81,10 +78,17 @@
       region: eu-west-1
       instance_id: "{{ ec2.tagged_instances[0].id }}"
     when: public_eip is defined
-  - name: wait for EIP association
-    wait_for: host="{{ public_eip }}" port=22 delay=5 timeout=360 state=started
-    with_items: ec2.tagged_instances
+  - name: define external ip to default
+    set_fact: 
+      external_ip: "{{ ec2.tagged_instances[0].public_ip }}"
+    when: public_eip is not defined
+  - name: define external ip to eip
+    set_fact:
+      external_ip: "{{ public_eip}}"
     when: public_eip is defined
+  - name: wait for Jenkins instance to be ready
+    wait_for: host="{{ external_ip }}" port=22 delay=5 timeout=360 state=started
+    with_items: ec2.tagged_instances
   - name: update Route53 DNS record
     route53:
       command: create
@@ -93,5 +97,5 @@
       record: "{{ dns_name }}.{{ r53_zone }}"
       ttl: 60
       type: A
-      value: "{{ ec2.tagged_instances[0].public_ip }}"
+      value: "{{ external_ip }}"
     when: r53_zone is defined and dns_name is defined
