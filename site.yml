@@ -67,6 +67,10 @@
       when: github_cert is defined
       notify:
         - import certificate into java keystore
+    - name: render jenkins admin mail and smtp server configuration script
+      template: dest=~/setup_mail.groovy src=templates/setup_mail.groovy.j2
+      notify:
+        - configure admin email and smtp server
     - name: copy default dsl seed config.xml to jenkins master
       copy: src=dsl/config.xml dest=/tmp/config.xml owner=jenkins group=jenkins mode=0644
     - name: create default dsl seed job
@@ -103,6 +107,8 @@
     - name: setup jenkins authentication
       shell: "curl 'http://127.0.0.1:8080/scriptText' -d \"script=$(cat ~/setup_authentication.groovy)\" -k $(cat ~/jenkins_auth)"
       when: vagrant is not defined
+    - name: configure admin email and smtp server
+      shell: "curl 'http://127.0.0.1:8080/scriptText' -d \"script=$(cat ~/setup_mail.groovy)\" -k $(cat ~/jenkins_auth)"
     - name: generate pub key
       shell: "ssh-keygen -y -f /var/lib/jenkins/.ssh/{{ deployer_key['name'] }} \
 > /var/lib/jenkins/.ssh/{{ deployer_key['name'] }}.pub \
