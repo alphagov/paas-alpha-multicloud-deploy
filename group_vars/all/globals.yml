@@ -1,5 +1,4 @@
 ---
-
 ami_id: "ami-47a23a30"
 
 ssh_key_name: multicloud-deploy
@@ -14,6 +13,10 @@ github_api_uri: "https://api.github.com/api/v3"
 github_hostname: "github.com"
 client_id: "github_app_client_id"
 client_secret: "github_app_client_secret"
+
+jenkins_mail_name: "Jenkins CI"
+jenkins_mail: "itsme@jenkins.com"
+smtp_server: "aspmx.l.google.com"
 
 permissions:
   admins:

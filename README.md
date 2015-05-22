@@ -124,7 +124,44 @@ github_cert: |
   -----BEGIN CERTIFICATE-----
   -----END CERTIFICATE-----
 ```
-=======
+
+## Email notifications
+
+Jenkins server will have email notifications enabled upon deploy. The SMTP server and administrator's name and email address (which will be used as 'from' when receiving notification mails from jenkins) can be configured overriding these global variables:
+```
+jenkins_mail_name: "Jenkins CI"
+jenkins_mail: "itsme@jenkins.com"
+smtp_server: "aspmx.l.google.com"
+```
+
+## Credentials
+
+Some of the jobs we deploy require our AWS and [GCE](https://cloud.google.com/compute/) credentials along with the ssh keys. We deploy these to standard locations (jenkins home and ~/.ssh). The variables are optional - credentials will only get deployed when you define:
+* `aws_credentials` - AWS credentials in a form of shell include 
+* `gce_account` - google compute engine account.json file
+* `deployer_key:`- deployer key with elements: `name:` - name of the key and `key:` - the key itself
+
+For example:
+```
+aws_credentials: |
+  export aws_access_key="mykey"
+  export aws_secret_key="mysecret"
+gce_account: |
+  {
+    "private_key_id": "deadb33f",
+    "private_key": "-----BEGIN PRIVATE KEY-----lotsofasciigibberish-----END PRIVATE KEY-----\n",
+    "client_email": "someuuid@developer.gserviceaccount.com",
+    "client_id": "someuuid.apps.googleusercontent.com",
+    "type": "service_account"
+  }
+deployer_key:
+  name: "my-deployer"
+  key: |
+    -----BEGIN RSA PRIVATE KEY-----
+	yourkeyhere
+    -----END RSA PRIVATE KEY-----
+```
+
 ## DNS
 
 ### AWS
