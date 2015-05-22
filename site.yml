@@ -46,9 +46,13 @@
     - name: install required packages
       action: apt pkg={{item}} state=installed
       with_items:
+        - ansible
+        - figlet
         - git
         - unzip
+        - python-dev
         - python-pip
+        - python-virtualenv
     - name: download terraform
       get_url: url=https://dl.bintray.com/mitchellh/terraform/terraform_0.4.2_linux_amd64.zip dest=/tmp/terraform.zip mode=0440
       notify:
