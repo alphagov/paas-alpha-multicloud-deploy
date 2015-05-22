@@ -102,6 +102,8 @@
     - name: deploy aws credentials
       copy: content="{{ aws_credentials }}" dest=/var/lib/jenkins/.aws_credentials
       when: aws_credentials is defined
+    - name: disable global ssh strict hostname checking
+      lineinfile: dest=/etc/ssh/ssh_config state=present regexp='^StrictHostKeyChecking' line='StrictHostKeyChecking no'
   handlers:
     - name: unzip terraform.zip to /usr/local/bin 
       unarchive: src=/tmp/terraform.zip dest=/usr/local/bin copy=no
