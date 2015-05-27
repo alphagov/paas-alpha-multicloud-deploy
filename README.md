@@ -123,7 +123,22 @@ keystore_password: "my.java.keystore.password"
 github_cert: |
   -----BEGIN CERTIFICATE-----
   -----END CERTIFICATE-----
+
+secrets_py |
+  GCE_PARAMS = ('...@developer.gserviceaccount.com', '/path/to/gce_account.json')
+  GCE_KEYWORD_PARAMS = {'project': 'project_id'}  
+gce_account_certificate_pem |
+  -----BEGIN RSA PRIVATE KEY-----
+  -----END RSA PRIVATE KEY-----
 ```
+
+### Manual steps
+
+Your `jenkins user` will need to have a `~/.vault_pass.txt` file, the easiest way to create one is to do the following whilst logged in as the `jenkins user`:
+ 
+ ```
+ echo "myvaultpassword" > ~/.vault_pass.txt
+ ```
 
 ## Email notifications
 
@@ -140,6 +155,8 @@ Some of the jobs we deploy require our AWS and [GCE](https://cloud.google.com/co
 * `aws_credentials` - AWS credentials in a form of shell include 
 * `gce_account` - google compute engine account.json file
 * `deployer_key:`- deployer key with elements: `name:` - name of the key and `key:` - the key itself
+* `secrets_py` - [Google Compute Engine](https://cloud.google.com/compute/) [credentials for Ansible](http://docs.ansible.com/guide_gce.html#calling-modules-with-secrets-py)
+* `gce_account_certificate_pem` - [Google Compute Engine](https://cloud.google.com/compute/) service account private key 
 
 For example:
 ```
@@ -160,6 +177,13 @@ deployer_key:
     -----BEGIN RSA PRIVATE KEY-----
 	yourkeyhere
     -----END RSA PRIVATE KEY-----
+
+secrets_py |
+  GCE_PARAMS = ('...@developer.gserviceaccount.com', '/path/to/gce_account.json')
+  GCE_KEYWORD_PARAMS = {'project': 'project_id'}  
+gce_account_certificate_pem |
+  -----BEGIN RSA PRIVATE KEY-----
+  -----END RSA PRIVATE KEY-----
 ```
 
 ## DNS
