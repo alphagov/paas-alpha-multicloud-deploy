@@ -18,7 +18,7 @@ jenkins_mail_name: "Jenkins CI"
 jenkins_mail: "itsme@jenkins.com"
 smtp_server: "aspmx.l.google.com"
 
-terraform_filename: "terraform_0.4.2_linux_amd64.zip"
+terraform_filename: "terraform_0.5.1_linux_amd64.zip"
 
 permissions:
   admins:
