@@ -104,6 +104,22 @@
       when: aws_credentials is defined
     - name: disable global ssh strict hostname checking
       lineinfile: dest=/etc/ssh/ssh_config state=present regexp='^StrictHostKeyChecking' line='StrictHostKeyChecking no'
+    - name: create secrets.py file
+      copy:
+        content: "{{ secrets_py  }}"
+        dest: /var/lib/jenkins/.secrets.py
+        owner: jenkins
+        group: jenkins
+        mode: 0600
+      when: secrets_py is defined
+    - name: create gce account certificate file
+      copy:
+        content: "{{ gce_account_certificate_pem  }}"
+        dest: /var/lib/jenkins/.gce_account.pem
+        owner: jenkins
+        group: jenkins
+        mode: 0600
+      when: gce_account_certificate_pem is defined
   handlers:
     - name: unzip terraform.zip to /usr/local/bin 
       unarchive: src=/tmp/terraform.zip dest=/usr/local/bin copy=no
