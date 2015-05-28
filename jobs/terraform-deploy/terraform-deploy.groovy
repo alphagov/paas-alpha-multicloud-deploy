@@ -46,8 +46,7 @@ terraform ${action} -var env=${environment_name} -input=false ${extraopts}
 # AWS
 cd ../aws
 . ~/.aws_credentials
-terraform ${action} -var env=${environment_name} -input=false ${extraopts} \
--var "aws_access_key=${aws_access_key}" -var "aws_secret_key=${aws_secret_key}"
+terraform ${action} -var env=${environment_name} -input=false ${extraopts}
 ''')
   }
 }

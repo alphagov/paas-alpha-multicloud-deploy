@@ -38,8 +38,6 @@ trap "kill ${SSH_AGENT_PID}" ERR
 
 [[ -f /usr/bin/figlet ]] && figlet Sourcing EC2 credentials
 . ~/.aws_credentials
-export AWS_ACCESS_KEY_ID=${aws_access_key}
-export AWS_SECRET_ACCESS_KEY=${aws_secret_key}
 echo done...
 
 
