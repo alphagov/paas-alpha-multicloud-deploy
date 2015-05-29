@@ -130,15 +130,47 @@ secrets_py |
 gce_account_certificate_pem |
   -----BEGIN RSA PRIVATE KEY-----
   -----END RSA PRIVATE KEY-----
+
+jenkins_gpg_secure_key: |
+    -----BEGIN PGP PRIVATE KEY BLOCK-----
+    Version: GnuPG v1
+
+    -----END PGP PRIVATE KEY BLOCK-----  
+
 ```
 
 ### Manual steps
 
-Your `jenkins user` will need to have a `~/.vault_pass.txt` file, the easiest way to create one is to do the following whilst logged in as the `jenkins user`:
- 
- ```
- echo "myvaultpassword" > ~/.vault_pass.txt
- ```
+You will need to generate a `pgp key pair` for the `jenkins` user account e.g.:
+
+```
+gpg --gen-key
+```
+
+Get your KEYID from your keyring:
+
+```
+gpg --list-secret-keys | grep sec
+```
+
+This will probably be pre-fixed with 2048R/ and look something like 93B1CD02
+
+Send your public key to pgp key server :
+
+```
+gpg --keyserver pgp.mit.edu --send-keys KEYID
+```
+
+Export your private key to an ascii format file:
+
+```
+gpg --export-secret-key -a "User Name" > private.key
+```
+
+Paste the contents of the `private.key` into the vault as the value for `jenkins_gpg_secure_key` (see above)
+
+Edit the `group_vars/all/globals.yml` file and set `gpg_public_key_id: KEYID`
+
 
 ## Email notifications
 
@@ -197,12 +229,6 @@ gce_account_certificate_pem |
 You can define `public_eip` variable to set the external IP of the server to the [Elastic IP](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html) address you have allocated previously. If you use AWS [Route53](http://aws.amazon.com/route53/) as a DNS provider you can define `r53_zone` and `dns_name` variables. A `{{dns_name}}.{{r53_zone}}` DNS record will be created/updated for the Jenkins server and set to its external IP.
 
 ## Deployment
-
-`ansible-playbook -i localhost, <PROVIDER_NAME>-provision.yml -v --vault-password-file vault_password.sh`
-
-`ansible-playbook -i ec2.py site.yml -v --vault-password-file vault_password.sh`
-
-Or:
 
 `make <PROVIDER_NAME>`
 
