@@ -152,7 +152,7 @@ smtp_server: "aspmx.l.google.com"
 ## Credentials
 
 Some of the jobs we deploy require our AWS and [GCE](https://cloud.google.com/compute/) credentials along with the ssh keys. We deploy these to standard locations (jenkins home and ~/.ssh). The variables are optional - credentials will only get deployed when you define:
-* `aws_credentials` - AWS credentials in a form of shell include 
+* `aws_credentials` - AWS credentials for your jobs in a form of shell include. You can include various formats.
 * `gce_account` - google compute engine account.json file
 * `deployer_key:`- deployer key with elements: `name:` - name of the key and `key:` - the key itself
 * `secrets_py` - [Google Compute Engine](https://cloud.google.com/compute/) [credentials for Ansible](http://docs.ansible.com/guide_gce.html#calling-modules-with-secrets-py)
@@ -161,8 +161,12 @@ Some of the jobs we deploy require our AWS and [GCE](https://cloud.google.com/co
 For example:
 ```
 aws_credentials: |
-  export aws_access_key="mykey"
-  export aws_secret_key="mysecret"
+  export AWS_ACCESS_KEY_ID="mykey"
+  export AWS_SECRET_ACCESS_KEY="mysecret"
+  # For terraform:
+  export TF_VAR_aws_access_key="mykey"
+  export TF_VAR_aws_secret_key="mysecret"
+
 gce_account: |
   {
     "private_key_id": "deadb33f",
