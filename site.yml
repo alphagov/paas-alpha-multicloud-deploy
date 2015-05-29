@@ -53,6 +53,10 @@
         - python-dev
         - python-pip
         - python-virtualenv
+        - gnupg2
+        - gnupg-agent
+        - pwgen
+        - pinentry-curses
     - name: download terraform
       get_url:
         dest="/tmp/{{ terraform_filename }}" mode=0440
