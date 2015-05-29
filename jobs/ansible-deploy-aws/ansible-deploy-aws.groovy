@@ -48,23 +48,17 @@ virtualenv .venv
 [[ -f /usr/bin/figlet ]] && figlet Installing python dependencies
 pip install -Ur requirements.txt
 
-
 [[ -f /usr/bin/figlet ]] \
   && figlet Refreshing ec2 inventory cache
 ./ec2.py --refresh-cache > /dev/null 2>&1 && echo done...
 
 [[ -f /usr/bin/figlet ]] \
   && figlet Configure ansible to use ${DEPLOY_ENV} environment
-make check-env-var render-ssh-config clean-roles ansible-galaxy 
+make clean-roles ansible-galaxy 
 
 [[ -f /usr/bin/figlet ]] \
   && figlet Running ansible against ${DEPLOY_ENV} environment
-ansible-playbook -i ec2.py \
-  --vault-password-file ~/.vault_pass.txt \
-  -e "deploy_env=${DEPLOY_ENV}" \
-  -e "@platform-aws.yml" \
-  site-aws.yml
-
+make aws
 
 kill ${SSH_AGENT_PID}
 ''')

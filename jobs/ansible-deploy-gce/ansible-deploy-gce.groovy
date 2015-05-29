@@ -51,16 +51,11 @@ pip install -Ur requirements.txt
 
 [[ -f /usr/bin/figlet ]] && \
  figlet Configure ansible to use ${DEPLOY_ENV} environment
-make check-env-var render-ssh-config clean-roles ansible-galaxy 
+make clean-roles ansible-galaxy 
 
 [[ -f /usr/bin/figlet ]] && \
  figlet Running ansible against ${DEPLOY_ENV} environment
-SSL_CERT_FILE=$(python -m certifi) ansible-playbook \
-  -i gce.py \
-  --vault-password-file  ~/.vault_pass.txt \
-  -e "deploy_env=${DEPLOY_ENV}" \
-  -e "@platform-gce.yml" \
-  site-gce.yml
+make gce
 
 kill ${SSH_AGENT_PID}
 ''')

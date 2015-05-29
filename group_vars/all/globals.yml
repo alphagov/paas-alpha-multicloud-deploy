@@ -18,6 +18,8 @@ jenkins_mail_name: "Jenkins CI"
 jenkins_mail: "itsme@jenkins.com"
 smtp_server: "aspmx.l.google.com"
 
+gpg_public_key_id: F35E9C9E
+
 terraform_filename: "terraform_0.5.1_linux_amd64.zip"
 
 permissions:
