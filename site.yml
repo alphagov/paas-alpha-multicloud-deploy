@@ -126,6 +126,24 @@
         group: jenkins
         mode: 0600
       when: gce_account_certificate_pem is defined
+    - name: copy bash_gpg
+      copy: src=files/.bash_gpg dest=/var/lib/jenkins/.bash_gpg
+    - name: copy gpg_agent.conf
+      copy: src=files/gpg-agent.conf dest=/var/lib/jenkins/.gnupg/gpg-agent.conf
+    - name: copy the .bashrc
+      copy: src=files/.bashrc dest=/var/lib/jenkins/.bashrc
+    - name: check gpg keys are present
+      shell: "gpg --list-public-keys"
+      sudo_user: jenkins
+      register: publickeys
+    - name: trigger gpg handlers
+      shell: "echo Importing GPG keys"
+      when: "not '{{ gpg_public_key_id }}' in publickeys.stdout"
+      notify:
+        - deploy gpg key file
+        - import gpg private key
+        - remove gpg key file
+        - import gpg public key
   handlers:
     - name: unzip terraform to /usr/local/bin
       unarchive: src="/tmp/{{ terraform_filename }}" dest=/usr/local/bin copy=no
@@ -141,4 +159,14 @@
       shell: "ssh-keygen -y -f /var/lib/jenkins/.ssh/{{ deployer_key['name'] }} \
 > /var/lib/jenkins/.ssh/{{ deployer_key['name'] }}.pub \
 && chown jenkins:jenkins /var/lib/jenkins/.ssh/{{ deployer_key['name'] }}.pub"
+    - name: deploy gpg key file
+      copy: content="{{ jenkins_gpg_secure_key }}" dest=/var/lib/jenkins/.gnupg/multicloud-deploy.key
+    - name: import gpg private key
+      shell: "gpg --batch --yes --allow-secret-key-import --import /var/lib/jenkins/.gnupg/multicloud-deploy.key"
+      sudo_user: jenkins
+    - name: remove gpg key file
+      file: path=/var/lib/jenkins/.gnupg/multicloud-deploy.key state=absent
+    - name: import gpg public key
+      shell: gpg --batch --yes --keyserver hkp://pgp.mit.edu  --recv-keys {{ gpg_public_key_id }}
+      sudo_user: jenkins
 
