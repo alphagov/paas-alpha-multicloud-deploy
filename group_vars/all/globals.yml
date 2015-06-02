@@ -20,7 +20,7 @@ smtp_server: "aspmx.l.google.com"
 
 gpg_public_key_id: F35E9C9E
 
-terraform_filename: "terraform_0.5.1_linux_amd64.zip"
+terraform_filename: "terraform_0.5.3_linux_amd64.zip"
 
 permissions:
   admins:
