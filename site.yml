@@ -172,6 +172,6 @@
     - name: remove gpg key file
       file: path=/var/lib/jenkins/.gnupg/multicloud-deploy.key state=absent
     - name: import gpg public key
-      shell: gpg --batch --yes --keyserver hkp://pgp.mit.edu  --recv-keys {{ gpg_public_key_id }}
+      shell: gpg --batch --yes --keyserver hkp://keyserver.ubuntu.com  --recv-keys {{ gpg_public_key_id }}
       sudo_user: jenkins
 
