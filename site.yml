@@ -128,6 +128,8 @@
       when: gce_account_certificate_pem is defined
     - name: copy bash_gpg
       copy: src=files/.bash_gpg dest=/var/lib/jenkins/.bash_gpg
+    - name: create jenkins gnupg hidden directory
+      file: path=/var/lib/jenkins/.gnupg state=directory owner=jenkins group=jenkins mode=0700
     - name: copy gpg_agent.conf
       copy: src=files/gpg-agent.conf dest=/var/lib/jenkins/.gnupg/gpg-agent.conf
     - name: copy the .bashrc
