@@ -65,7 +65,7 @@
         - unzip terraform to /usr/local/bin
     - name: configure jenkins token
       copy: content="-u {{ jenkins_admin_user }}:{{ jenkins_api_token }}" dest=~/jenkins_auth
-      when: jenkins_admin_user is defined and jenkins_api_token is defined
+      when: jenkins_admin_user is defined and jenkins_api_token is defined and vagrant is not defined
       notify:
         - setup jenkins authentication
     - name: render jenkins authentication configuration script
@@ -172,6 +172,7 @@
       when: vagrant is not defined
     - name: configure admin email and smtp server
       shell: "curl 'http://127.0.0.1:8080/scriptText' -d \"script=$(cat ~/setup_mail.groovy)\" -k $(cat ~/jenkins_auth)"
+      when: vagrant is not defined
     - name: generate pub key
       shell: "ssh-keygen -y -f /var/lib/jenkins/.ssh/{{ deployer_key['name'] }} \
 > /var/lib/jenkins/.ssh/{{ deployer_key['name'] }}.pub \
