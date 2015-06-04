@@ -1,6 +1,8 @@
 ---
 ami_id: "ami-47a23a30"
 
+target_environment_name: "{{ lookup('env','DEPLOY_ENV') }}"
+
 ssh_key_name: multicloud-deploy
 ec2_access_key: lookup('env', 'AWS_ACCESS_KEY_ID')
 ec2_secret_key: lookup('env', 'AWS_SECRET_ACCESS_KEY')

@@ -2,7 +2,7 @@ job {
   name 'ansible-deploy-aws'
   description('Run ansible against Amazon EC2')
   parameters {
-    choiceParam("DEPLOY_ENV", ["ci"],
+    choiceParam("DEPLOY_ENV", [" {{ target_environment_name }} "],
             "Select which environment you wish to run ansible against")
   }
   scm {

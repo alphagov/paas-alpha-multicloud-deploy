@@ -27,7 +27,7 @@ job {
     shell('''#!/bin/bash
 set -x
 home=`pwd`
-environment_name="ci"
+environment_name="{{ target_environment_name }}"
 
 # Set-up ssh keys and gce credentials
 mkdir -p gce/ssh aws/ssh
