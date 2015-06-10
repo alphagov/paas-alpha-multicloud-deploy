@@ -195,9 +195,6 @@ For example:
 aws_credentials: |
   export AWS_ACCESS_KEY_ID="mykey"
   export AWS_SECRET_ACCESS_KEY="mysecret"
-  # For terraform:
-  export TF_VAR_aws_access_key="mykey"
-  export TF_VAR_aws_secret_key="mysecret"
 
 gce_account: |
   {
