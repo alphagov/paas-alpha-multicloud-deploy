@@ -7,6 +7,10 @@
     - geerlingguy.jenkins
     - jdauphant.nginx
     - { role: openconnect, when: vagrant is not defined }
+    - role: rvm_io.rvm1-ruby
+      rvm1_rubies:
+      - 'ruby-2.2.2'
+
   pre_tasks:
     - name: install snake oil ssl certificates
       apt: name=ssl-cert state=present
@@ -63,6 +67,8 @@
         url="https://dl.bintray.com/mitchellh/terraform/{{ terraform_filename }}"
       notify:
         - unzip terraform to /usr/local/bin
+    - name: add jenkins to rvm group
+      user: name=jenkins groups=rvm append=yes
     - name: configure jenkins token
       copy: content="-u {{ jenkins_admin_user }}:{{ jenkins_api_token }}" dest=~/jenkins_auth
       when: jenkins_admin_user is defined and jenkins_api_token is defined and vagrant is not defined

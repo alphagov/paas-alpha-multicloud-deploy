@@ -9,3 +9,5 @@
 - src: https://github.com/alphagov/ansible-role-openconnect.git
   version: "0.1"
   name: openconnect
+- src: rvm_io.rvm1-ruby
+  version: v1.3.7
