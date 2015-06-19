@@ -21,6 +21,7 @@
       - job-dsl
       - github-api
       - github-oauth
+      - parameterized-trigger
       - role-strategy
       - ansicolor
     nginx_sites:
