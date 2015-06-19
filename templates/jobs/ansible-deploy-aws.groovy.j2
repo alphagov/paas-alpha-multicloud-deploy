@@ -4,13 +4,15 @@ job {
   parameters {
     stringParam("DEPLOY_ENV", "{{ target_environment_name }}",
             "Select which environment you wish to run ansible against")
+    stringParam("REF_NAME", "{{ reference_name }}",
+            "Select which branch or tag you wish to run ansible with")
   }
   scm {
     git {
       remote {
 	url('https://github.com/alphagov/tsuru-ansible.git')
       }
-      branch('master')
+      branch('${REF_NAME}')
       createTag(false)
     }
   }
