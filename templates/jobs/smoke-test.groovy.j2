@@ -1,0 +1,44 @@
+job {
+  name 'smoke-test'
+  description('Runs a smoke test against one tsuru deployment')
+  parameters {
+    choiceParam("DEPLOY_ENV", ["{{ target_environment_name }}"],
+            "Select which environment you wish to run the test against")
+    choiceParam("TARGET_PLATFORM", ["aws", "gce"],
+            "Select which platform you wish to run the test against")
+  }
+  scm {
+    git {
+      remote {
+	    url('https://github.com/alphagov/tsuru-testing.git')
+      }
+      branch('smoke_test')
+      createTag(false)
+    }
+  }
+  triggers {
+   // scm("H/5 * * * *")                                                                                                      \\
+   // upstream('ansible-deploy-aws','SUCCESS')
+  }
+  wrappers {
+    colorizeOutput()
+  }
+  publishers {
+    // mailer("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk", false, true)
+  }
+  steps {
+    shell('''#!/bin/bash
+. ~/.tsuru_credentials
+
+. /etc/profile.d/rvm.sh
+
+rvm use --create 2.2.2@smoketest
+
+bundle install --path vendor/bundle
+
+export VERBOSE=true
+bundle exec rake endtoend:all
+
+''')
+  }
+}
