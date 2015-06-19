@@ -26,6 +26,11 @@ job {
   }
   publishers {
     mailer("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk", false, true)
+    downstreamParameterized {
+      trigger("ansible-deploy-aws, ansible-deploy-gce", 'SUCCESS', true) {
+        currentBuild()
+      }
+    }
   }
   steps {
     shell('''#!/bin/bash
