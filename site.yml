@@ -67,6 +67,13 @@
         url="https://dl.bintray.com/mitchellh/terraform/{{ terraform_filename }}"
       notify:
         - unzip terraform to /usr/local/bin
+    - name: Add tsuru repositories.
+      apt_repository: repo='ppa:tsuru/ppa' update_cache=yes
+    - name: Install tsuru client packages
+      apt: update_cache=true name="{{ item }}"
+      with_items:
+      - tsuru-client
+      - tsuru-admin
     - name: add jenkins to rvm group
       user: name=jenkins groups=rvm append=yes
     - name: configure jenkins token
