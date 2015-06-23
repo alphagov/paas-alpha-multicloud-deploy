@@ -76,6 +76,8 @@
       - tsuru-admin
     - name: add jenkins to rvm group
       user: name=jenkins groups=rvm append=yes
+      notify:
+        - restart jenkins
     - name: configure jenkins token
       copy: content="-u {{ jenkins_admin_user }}:{{ jenkins_api_token }}" dest=~/jenkins_auth
       when: jenkins_admin_user is defined and jenkins_api_token is defined and vagrant is not defined
