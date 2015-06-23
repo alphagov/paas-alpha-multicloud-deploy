@@ -7,6 +7,10 @@
     - geerlingguy.jenkins
     - jdauphant.nginx
     - { role: openconnect, when: vagrant is not defined }
+    - role: rvm_io.rvm1-ruby
+      rvm1_rubies:
+      - 'ruby-2.2.2'
+
   pre_tasks:
     - name: install snake oil ssl certificates
       apt: name=ssl-cert state=present
@@ -63,6 +67,17 @@
         url="https://dl.bintray.com/mitchellh/terraform/{{ terraform_filename }}"
       notify:
         - unzip terraform to /usr/local/bin
+    - name: Add tsuru repositories.
+      apt_repository: repo='ppa:tsuru/ppa' update_cache=yes
+    - name: Install tsuru client packages
+      apt: update_cache=true name="{{ item }}"
+      with_items:
+      - tsuru-client
+      - tsuru-admin
+    - name: add jenkins to rvm group
+      user: name=jenkins groups=rvm append=yes
+      notify:
+        - restart jenkins
     - name: configure jenkins token
       copy: content="-u {{ jenkins_admin_user }}:{{ jenkins_api_token }}" dest=~/jenkins_auth
       when: jenkins_admin_user is defined and jenkins_api_token is defined and vagrant is not defined
@@ -95,14 +110,26 @@
         - /var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/terraform-deploy
         - /var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/ansible-deploy-aws
         - /var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/ansible-deploy-gce
+        - /var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/smoke-test-aws
+        - /var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/smoke-test-gce
+      tags:
+        - job_definition
     - name: generate jenkins jobs from templates
-      action: template dest=/var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/{{item}}/{{item}}.groovy src=templates/jobs/{{item}}.groovy.j2
+      template:
+        dest: "/var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/{{item}}/{{item}}.groovy"
+        src: "templates/jobs/{{item}}.groovy.j2"
       with_items:
         - terraform-deploy
         - ansible-deploy-aws
         - ansible-deploy-gce
+        - smoke-test-aws
+        - smoke-test-gce
+      tags:
+        - job_definition
     - name: generate jenkins job from dsl seed job
       shell: "curl -X POST 'http://127.0.0.1:8080/job/default-dsl-job/build' -k $(cat ~/jenkins_auth)"
+      tags:
+        - job_definition
     - name: wait for creation and disable terraform jenkins job on vagrant boxes
       shell: "sleep 15 && curl -X POST 'http://127.0.0.1:8080/job/terraform-deploy/disable' -k $(cat ~/jenkins_auth)"
       when: vagrant is defined
@@ -123,6 +150,9 @@
     - name: deploy aws credentials
       copy: content="{{ aws_credentials }}" dest=/var/lib/jenkins/.aws_credentials
       when: aws_credentials is defined
+    - name: deploy tsuru credentials
+      copy: content="{{ tsuru_credentials }}" dest=/var/lib/jenkins/.tsuru_credentials
+      when: tsuru_credentials is defined
     - name: disable global ssh strict hostname checking
       lineinfile: dest=/etc/ssh/ssh_config state=present regexp='^StrictHostKeyChecking' line='StrictHostKeyChecking no'
     - name: create secrets.py file
