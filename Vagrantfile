@@ -8,7 +8,7 @@ Vagrant.configure(2) do |config|
   config.vm.hostname = "jenkins"
 
   config.vm.provider "docker" do |d, override|
-    d.image = 'smerrill/vagrant-ubuntu-trusty'
+    d.image = 'guilhem/vagrant-ubuntu'
     d.has_ssh = true
 
     # This is needed if you have non-Docker provisioners in the Vagrantfile.
