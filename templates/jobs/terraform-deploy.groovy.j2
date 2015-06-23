@@ -4,13 +4,17 @@ job {
   parameters {
     choiceParam("action", ["apply", "destroy"],
                 "Select if you want to apply changes to environments or destroy them.")
+    stringParam("DEPLOY_ENV", "{{ target_environment_name }}",
+            "Select which environment you wish to run terraform against")
+    stringParam("REF_NAME", "{{ reference_name }}",
+            "Select which branch or tag you wish to run terraform with")
   }
   scm {
     git {
       remote {
 	url('https://github.com/alphagov/tsuru-terraform.git')
       }
-      branch('master')
+      branch('${REF_NAME}')
       createTag(false)
     }
   }
@@ -22,12 +26,17 @@ job {
   }
   publishers {
     mailer("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk", false, true)
+    downstreamParameterized {
+      trigger("ansible-deploy-aws, ansible-deploy-gce", 'SUCCESS', true) {
+        currentBuild()
+      }
+    }
   }
   steps {
     shell('''#!/bin/bash
 set -x
 home=`pwd`
-environment_name="{{ target_environment_name }}"
+environment_name=${DEPLOY_ENV}
 
 # Set-up ssh keys and gce credentials
 mkdir -p gce/ssh aws/ssh

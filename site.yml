@@ -21,6 +21,7 @@
       - job-dsl
       - github-api
       - github-oauth
+      - parameterized-trigger
       - role-strategy
       - ansicolor
     nginx_sites:
@@ -112,6 +113,7 @@
         - /var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/ansible-deploy-gce
         - /var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/smoke-test-aws
         - /var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/smoke-test-gce
+        - /var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/demo-env-deploy
       tags:
         - job_definition
     - name: generate jenkins jobs from templates
@@ -124,6 +126,7 @@
         - ansible-deploy-gce
         - smoke-test-aws
         - smoke-test-gce
+        - demo-env-deploy
       tags:
         - job_definition
     - name: generate jenkins job from dsl seed job
