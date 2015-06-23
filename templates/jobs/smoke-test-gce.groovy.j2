@@ -33,12 +33,9 @@ job {
 
 TARGET_PLATFORM=gce
 
-rvm use --create 2.2.2@smoketest
+rvm use --create 2.2.2@tsuru-ansible
 
-bundle install --path vendor/bundle
-
-bundle exec rake endtoend:all
-
+make test-gce
 ''')
   }
 }
