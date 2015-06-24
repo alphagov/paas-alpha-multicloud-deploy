@@ -32,7 +32,7 @@ job {
     colorizeOutput()
   }
   publishers {
-    // mailer("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk", false, true)
+    mailer("{{ email_notification_address | default("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk")}}")
   }
   steps {
     shell('''#!/bin/bash
