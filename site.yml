@@ -138,6 +138,7 @@
         platform: "aws"
         target: "demo"
         build_interval: "H/5 * * * *"
+        email_notification_address: "multi-cloud-paas-demo@digital.cabinet-office.gov.uk"
     - include: jenkins_job.yml
       vars:
         job_name: smoke-test-demo-gce
@@ -145,6 +146,7 @@
         platform: "gce"
         target: "demo"
         build_interval: "H/5 * * * *"
+        email_notification_address: "multi-cloud-paas-demo@digital.cabinet-office.gov.uk"
 
     - name: wait for creation and disable terraform jenkins job on vagrant boxes
       shell: "sleep 15 && curl -X POST 'http://127.0.0.1:8080/job/terraform-deploy/disable' -k $(cat ~/jenkins_auth)"
