@@ -137,7 +137,7 @@
         job_template: smoke-test
         platform: "aws"
         target: "demo"
-        build_interval: "H/5 * * * *"
+        build_interval: "H/2 * * * *"
         email_notification_address: "multi-cloud-paas-demo@digital.cabinet-office.gov.uk"
     - include: jenkins_job.yml
       vars:
@@ -145,7 +145,7 @@
         job_template: smoke-test
         platform: "gce"
         target: "demo"
-        build_interval: "H/5 * * * *"
+        build_interval: "H/2 * * * *"
         email_notification_address: "multi-cloud-paas-demo@digital.cabinet-office.gov.uk"
 
     - name: wait for creation and disable terraform jenkins job on vagrant boxes
