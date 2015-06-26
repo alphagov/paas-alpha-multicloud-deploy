@@ -1,0 +1,51 @@
+job {
+  name '{{job_name}}'
+  description('Runs a smoke test against tsuru deployment {{ target }} on {{ platform }}')
+  parameters {
+    stringParam("DEPLOY_ENV", "{{ target }}",
+            "Indicate which environment you wish to run the test against")
+    stringParam("TARGET_PLATFORM", "{{ platform }}",
+            "Indicate which platform you wish to run the test against")
+    choiceParam("VERBOSE", ["true", "false"],
+            "Select if you want verbose output")
+  }
+  scm {
+    git {
+      remote {
+	    url('https://github.com/alphagov/tsuru-ansible.git')
+      }
+      branch('master')
+      createTag(false)
+    }
+  }
+  triggers {
+   {% if build_interval is defined %}
+   cron("{{ build_interval }}")
+   {% endif %}
+   {% if upstream_jobs is defined %}
+   {% for upstream_job in upstream_jobs %}
+   upstream('{{ upstream_job }}','SUCCESS')
+   {% endfor %}
+   {% endif %}
+  }
+  wrappers {
+    colorizeOutput()
+  }
+  publishers {
+    mailer("{{ email_notification_address | default("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk")}}")
+  }
+  steps {
+    shell('''#!/bin/bash
+. ~/.tsuru_credentials
+
+virtualenv .venv
+. .venv/bin/activate
+pip install -Ur requirements.txt
+
+. /etc/profile.d/rvm.sh
+rvm use --create 2.2.2@tsuru-ansible
+
+make test-${TARGET_PLATFORM}
+''')
+  }
+}

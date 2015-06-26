@@ -21,7 +21,6 @@
       - job-dsl
       - github-api
       - github-oauth
-      - parameterized-trigger
       - role-strategy
       - ansicolor
     nginx_sites:
@@ -105,37 +104,55 @@
         chdir: /tmp/
     - name: create jenkins seed job directory structure
       copy: src=jobs dest=/var/lib/jenkins/jobs/default-dsl-job/workspace directory_mode=0750 mode=0640 owner=jenkins group=jenkins
-    - name: create jenkins job directory structure
-      action: file path={{item}} state=directory mode=0775 owner="jenkins"
-      with_items:
-        - /var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/terraform-deploy
-        - /var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/ansible-deploy-aws
-        - /var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/ansible-deploy-gce
-        - /var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/smoke-test-aws
-        - /var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/smoke-test-gce
-        - /var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/demo-env-deploy
-      tags:
-        - job_definition
-    - name: generate jenkins jobs from templates
-      template:
-        dest: "/var/lib/jenkins/jobs/default-dsl-job/workspace/jobs/{{item}}/{{item}}.groovy"
-        src: "templates/jobs/{{item}}.groovy.j2"
-      with_items:
-        - terraform-deploy
-        - ansible-deploy-aws
-        - ansible-deploy-gce
-        - smoke-test-aws
-        - smoke-test-gce
-        - demo-env-deploy
-      tags:
-        - job_definition
-    - name: generate jenkins job from dsl seed job
-      shell: "curl -X POST 'http://127.0.0.1:8080/job/default-dsl-job/build' -k $(cat ~/jenkins_auth)"
-      tags:
-        - job_definition
-    - name: wait for creation and disable terraform jenkins job on vagrant boxes
-      shell: "sleep 15 && curl -X POST 'http://127.0.0.1:8080/job/terraform-deploy/disable' -k $(cat ~/jenkins_auth)"
-      when: vagrant is defined
+    # Job definitions.
+    # We use include in order to override variables, templates don't support that.
+    - include: jenkins_job.yml
+      vars:
+        job_name: terraform-deploy
+    - include: jenkins_job.yml
+      vars:
+        job_name: ansible-deploy-aws
+      notify:
+        - wait for creation and disable terraform jenkins job on vagrant boxes
+    - include: jenkins_job.yml
+      vars:
+        job_name: ansible-deploy-gce
+    - include: jenkins_job.yml
+      vars:
+        job_name: demo-env-deploy
+    - include: jenkins_job.yml
+      vars:
+        job_name: smoke-test-ci-aws
+        job_template: smoke-test
+        platform: "aws"
+        target: "ci"
+        upstream_jobs:
+        - "ansible-deploy-aws"
+    - include: jenkins_job.yml
+      vars:
+        job_name: smoke-test-ci-gce
+        job_template: smoke-test
+        platform: "gce"
+        target: "ci"
+        upstream_jobs:
+        - "ansible-deploy-gce"
+    - include: jenkins_job.yml
+      vars:
+        job_name: smoke-test-demo-aws
+        job_template: smoke-test
+        platform: "aws"
+        target: "demo"
+        build_interval: "H/2 * * * *"
+        email_notification_address: "multi-cloud-paas-demo@digital.cabinet-office.gov.uk"
+    - include: jenkins_job.yml
+      vars:
+        job_name: smoke-test-demo-gce
+        job_template: smoke-test
+        platform: "gce"
+        target: "demo"
+        build_interval: "H/2 * * * *"
+        email_notification_address: "multi-cloud-paas-demo@digital.cabinet-office.gov.uk"
+
     - name: create jenkins .ssh directory
       file: path=/var/lib/jenkins/.ssh state=directory mode=0775 owner="jenkins"
     - name: deploy deployer keys
@@ -220,4 +237,9 @@
     - name: import gpg public key
       shell: gpg --batch --yes --keyserver hkp://keyserver.ubuntu.com  --recv-keys {{ gpg_public_key_id }}
       sudo_user: jenkins
+    - name: process DSL jobs
+      shell: "curl -X POST 'http://127.0.0.1:8080/job/default-dsl-job/build' -k $(cat ~/jenkins_auth)"
+    - name: wait for creation and disable terraform jenkins job on vagrant boxes
+      shell: "sleep 15 && curl -X POST 'http://127.0.0.1:8080/job/terraform-deploy/disable' -k $(cat ~/jenkins_auth)"
+      when: vagrant is defined
 
