@@ -50,12 +50,12 @@ set -e
 
 # GCE
 cd gce
-terraform ${action} -var env=${environment_name} -input=false ${extraopts}
+terraform ${action} -var env=${environment_name} -input=false -state=${environment_name}-terraform.tfstate ${extraopts}
 
 # AWS
 cd ../aws
 . ~/.aws_credentials
-terraform ${action} -var env=${environment_name} -input=false ${extraopts}
+terraform ${action} -var env=${environment_name} -input=false -state=${environment_name}-terraform.tfstate ${extraopts}
 ''')
   }
 }
