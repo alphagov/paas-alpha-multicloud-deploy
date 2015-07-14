@@ -1,0 +1,72 @@
+job {
+  name '{{job_name}}'
+  description('Suspends environments')
+  parameters {
+    stringParam("EXCLUDE_ENV", "{{ exclude_env }}",
+            "Space separated list of environments to exclude from shutdown")
+  }
+  scm {
+    git {
+      remote {
+	    url('https://github.com/alphagov/tsuru-ansible.git')
+      }
+      branch('master')
+      createTag(false)
+    }
+  }
+  triggers {
+   cron("{{ cron_suspend_time }}")
+  }
+  wrappers {
+    colorizeOutput()
+  }
+  publishers {
+    mailer("{{ email_notification_address | default("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk")}}")
+  }
+  steps {
+    shell('''#!/bin/bash
+# Disable output buffering to give realtime data
+export PYTHONUNBUFFERED=1
+
+# Assign SSH private key
+eval $(ssh-agent) && ssh-add ~/.ssh/insecure-deployer
+
+# Set up trap to clean up ssh-agent process in the event of any failure
+set -e
+trap "kill ${SSH_AGENT_PID}" EXIT
+
+# Set up virtualenv
+virtualenv .venv
+. .venv/bin/activate
+
+# Install python dependencies
+pip install -Ur requirements.txt
+
+# AWS
+# Source EC2 credentials
+. ~/.aws_credentials
+
+# 1. Get environments
+NAT_HOSTS=`./ec2.py --refresh-cache | grep \\"tag_Name_.*-tsuru-nat`
+ENVIRONMENTS=`echo "$NAT_HOSTS" | sed 's/.\\+"tag_Name_// ; s/-tsuru-nat.*//'`
+
+# 2. Exclude
+EXC=`echo "$EXCLUDE_ENV" | sed "s/ /|/g"`
+ENV=`echo "$ENVIRONMENTS" | grep -Ev $EXC`
+
+# 3. Suspend
+echo "Suspending environments on AWS:"
+set +e
+result=0
+for environment in $ENV ; do
+  echo "Suspending ${environment}..."
+  make suspend-aws DEPLOY_ENV=$environment
+  result=`expr $? + $result`
+done
+
+kill ${SSH_AGENT_PID}
+exit $result
+''')
+  }
+}
+

@@ -153,6 +153,16 @@
         target: "demo"
         build_interval: "H/2 * * * *"
         email_notification_address: "multi-cloud-paas-demo@digital.cabinet-office.gov.uk"
+    - include: jenkins_job.yml
+      vars:
+        job_name: suspend-aws-environments
+        exclude_env: "demo ci"
+        cron_suspend_time: "0 19 * * *"
+    - include: jenkins_job.yml
+      vars:
+        job_name: suspend-gce-environments
+        exclude_env: "demo ci"
+        cron_suspend_time: "0 19 * * *"
 
     - name: create jenkins .ssh directory
       file: path=/var/lib/jenkins/.ssh state=directory mode=0775 owner="jenkins"
