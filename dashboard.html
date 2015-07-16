@@ -6,21 +6,21 @@
     <style>
     body { background: #333; }
     .box { height: 1000px; float: left; }
-    .box-left { width: 50%; }
-    .box-right { width: 50%; }
+    #box-left { width: 50%; }
+    #box-right { width: 50%; }
     iframe { margin: 0; border: 0; }
     </style>
 </head>
 <body>
 
-<div class="box box-left">
+<div class="box" id="box-left">
   <iframe id="jenkins"
     src=""
     width="100%" height="100%">
   </iframe>
 </div>
 
-<div class="box box-right">
+<div class="box" id="box-right">
   <iframe id="pull-requests"
     src=""
     width="100%" height="100%">
@@ -37,16 +37,22 @@ function getParameterByName(name) {
 
 var JENKINS_URL = getParameterByName("JENKINS_URL")
       || "https://deploy.tools.paas.alphagov.co.uk",
-    FOURTH_WALL_URL = "http://alphagov.github.io/fourth-wall/";
+    FOURTH_WALL_URL = getParameterByName("JENKINS_URL")
+      || "http://alphagov.github.io/fourth-wall",
+    LEFT_WIDTH = getParameterByName("LEFT_WIDTH") || "50",
+    RIGHT_WIDTH = getParameterByName("RIGHT_WIDTH") || "50";
 
 var loc = window.location.toString(),
     urlParts = loc.split('?'),
     queryString = urlParts[urlParts.length-1],
-    jenkinsIframe = document.getElementById('jenkins'),
-    pullRequestsIframe = document.getElementById('pull-requests');
+    jenkinsIframe = document.getElementById("jenkins"),
+    pullRequestsIframe = document.getElementById("pull-requests");
 
     jenkinsIframe.src = JENKINS_URL + "/view/Build%20Monitor%20View/";
     pullRequestsIframe.src = FOURTH_WALL_URL + "?" + queryString;
+
+    document.getElementById("box-left").style.width = LEFT_WIDTH + "%";
+    document.getElementById("box-right").style.width = RIGHT_WIDTH + "%";
 </script>
 
 </body>
