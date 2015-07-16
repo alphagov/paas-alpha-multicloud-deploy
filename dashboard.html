@@ -28,16 +28,25 @@
 </div>
 
 <script type="text/javascript">
-var JENKINS_URL = "https://deploy.tools.paas.alphagov.co.uk",
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+var JENKINS_URL = getParameterByName("JENKINS_URL")
+      || "https://deploy.tools.paas.alphagov.co.uk",
     FOURTH_WALL_URL = "http://alphagov.github.io/fourth-wall/";
 
 var loc = window.location.toString(),
-    params = loc.split('?')[1],
+    urlParts = loc.split('?'),
+    queryString = urlParts[urlParts.length-1],
     jenkinsIframe = document.getElementById('jenkins'),
     pullRequestsIframe = document.getElementById('pull-requests');
 
     jenkinsIframe.src = JENKINS_URL + "/view/Build%20Monitor%20View/";
-    pullRequestsIframe.src = FOURTH_WALL_URL + "?" + params;
+    pullRequestsIframe.src = FOURTH_WALL_URL + "?" + queryString;
 </script>
 
 </body>
