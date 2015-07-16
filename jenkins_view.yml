@@ -1,0 +1,17 @@
+---
+- name: create jenkins view directory structure for {{ view_name }}
+  file:
+    path: /var/lib/jenkins/jobs/default-dsl-job/workspace/views/{{ view_name }}
+    state: directory
+    mode: 0775
+    owner: "jenkins"
+  tags:
+    - view_definition
+- name: generate jenkins views from template {{ view_template | default(view_name) }}
+  template:
+    dest: "/var/lib/jenkins/jobs/default-dsl-job/workspace/views/{{ view_name }}.groovy"
+    src: "templates/views/{{ view_template | default(view_name) }}.groovy.j2"
+  tags:
+    - view_definition
+  notify:
+    - process DSL

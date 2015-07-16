@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="icon" type="image/png" href="favicon-32.png">
+    <style>
+    body { background: #333; }
+    .box { height: 1000px; float: left; }
+    .box-left { width: 50%; }
+    .box-right { width: 50%; }
+    iframe { margin: 0; border: 0; }
+    </style>
+</head>
+<body>
+
+<div class="box box-left">
+  <iframe id="jenkins"
+    src=""
+    width="100%" height="100%">
+  </iframe>
+</div>
+
+<div class="box box-right">
+  <iframe id="pull-requests"
+    src=""
+    width="100%" height="100%">
+  </iframe>
+</div>
+
+<script type="text/javascript">
+var JENKINS_URL = "https://deploy.tools.paas.alphagov.co.uk",
+    FOURTH_WALL_URL = "http://alphagov.github.io/fourth-wall/";
+
+var loc = window.location.toString(),
+    params = loc.split('?')[1],
+    jenkinsIframe = document.getElementById('jenkins'),
+    pullRequestsIframe = document.getElementById('pull-requests');
+
+    jenkinsIframe.src = JENKINS_URL + "/view/Build%20Monitor%20View/";
+    pullRequestsIframe.src = FOURTH_WALL_URL + "?" + params;
+</script>
+
+</body>
+</html>

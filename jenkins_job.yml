@@ -14,5 +14,4 @@
   tags:
     - job_definition
   notify:
-    - process DSL jobs
-
+    - process DSL
