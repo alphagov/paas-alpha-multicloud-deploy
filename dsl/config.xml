@@ -12,7 +12,7 @@
     <concurrentBuild>false</concurrentBuild>
     <builders>
         <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.32">
-            <targets>jobs/**/*.groovy</targets>
+            <targets>jobs/**/*.groovy,views/**/*.groovy</targets>
             <usingScriptText>false</usingScriptText>
             <ignoreExisting>false</ignoreExisting>
             <removedJobAction>IGNORE</removedJobAction>

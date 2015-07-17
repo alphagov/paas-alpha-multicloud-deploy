@@ -4,7 +4,7 @@ Ansible project to create and maintain a [Jenkins](https://jenkins-ci.org/)
 service that will be used to continuous deploy our [Tsuru](https://tsuru.io/) [environment](https://github.com/alphagov/tsuru-terraform).
 
 This project uses the [Jenkins Job DSL](https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin) to define a job
-as code and store that job using a version management system. 
+as code and store that job using a version management system.
 
 This project implements the use of an [ansible dynamic inventory](https://aws.amazon.com/blogs/apn/getting-started-with-ansible-and-dynamic-amazon-ec2-inventory-management/)
 Script and configuration file used for dynamic inventory on aws (ec2.py and ec2.ini) are part of [ansible plugins](https://github.com/ansible/ansible/tree/devel/plugins/inventory)
@@ -17,7 +17,7 @@ The Jenkins server is configured to use [GitHub authorization](https://wiki.jenk
 [Openconnect VPN client](http://www.infradead.org/openconnect/) is installed to allow Jenkins access our internal GitHub.
 
 ## Requirements
- 
+
 * `ansible`
 
 * Python things (you may wish to use [virtualenv](https://virtualenv.pypa.io/en/latest/)):
@@ -37,7 +37,7 @@ A [vagrant](https://www.vagrantup.com/) file has been provided for local testing
 
 `vagrant up --provision`
 
-There is also a helper [Makefile](https://www.gnu.org/software/make/manual/make.html#Introduction) in the base directory of this project 
+There is also a helper [Makefile](https://www.gnu.org/software/make/manual/make.html#Introduction) in the base directory of this project
 that will automatically bring up the environment by running:
 
 `make vagrant` and browsing to `https://127.0.0.1:8443`
@@ -188,7 +188,7 @@ Some of the jobs we deploy require our AWS and [GCE](https://cloud.google.com/co
 * `gce_account` - google compute engine account.json file
 * `deployer_key:`- deployer key with elements: `name:` - name of the key and `key:` - the key itself
 * `secrets_py` - [Google Compute Engine](https://cloud.google.com/compute/) [credentials for Ansible](http://docs.ansible.com/guide_gce.html#calling-modules-with-secrets-py)
-* `gce_account_certificate_pem` - [Google Compute Engine](https://cloud.google.com/compute/) service account private key 
+* `gce_account_certificate_pem` - [Google Compute Engine](https://cloud.google.com/compute/) service account private key
 
 For example:
 ```
@@ -237,3 +237,29 @@ Where:
 
 * At this moment, only the 'aws' platform is supported
 * You will need to log in to jenkins to obtain the `jenkins_api_token` and add it to your ansible `globals.yml` or `vault` file to enable subsequent jenkins and job configuration
+
+## Dashboard
+
+This repository also contains a `dashboard.html` web page which can be used as an alternative to Fourth Wall dashboard.
+
+It combines Fourth Wall and Jenkins Buld Monitor View Plugin to display two dashboards side by side.
+
+In order to use it, just copy this file locally to the computer running the dashboard, and open the file in a browser, passing required query string parameters:
+
+- token (Github token)
+- gist (ID of a Gist listing all repositories we are interested in)
+
+Optional parameters:
+
+- JENKINS_URL (defaults to `https://deploy.tools.paas.alphagov.co.uk`)
+- FOURTH_WALL_URL (defaults to `https://alphagov.github.io/fourth-wall`)
+- LEFT_WIDTH (defaults to `50`)
+- RIGHT_WIDTH (defaults to `50`)
+
+The dashboard simply displays two iframes side by side.
+
+Alternatively, if you don't want to copy the file locally, you can just use raw Github URL, something like:
+
+```
+https://cdn.rawgit.com/alphagov/multicloud-deploy/master/dashboard.html?token=XXXX&gist=XXXXX
+```

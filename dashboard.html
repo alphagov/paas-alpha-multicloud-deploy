@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="icon" type="image/png" href="favicon-32.png">
+    <style>
+    body { background: #333; }
+    .box { height: 1000px; float: left; }
+    #box-left { width: 50%; }
+    #box-right { width: 50%; }
+    iframe { margin: 0; border: 0; }
+    </style>
+</head>
+<body>
+
+<div class="box" id="box-left">
+  <iframe id="jenkins"
+    src=""
+    width="100%" height="100%">
+  </iframe>
+</div>
+
+<div class="box" id="box-right">
+  <iframe id="pull-requests"
+    src=""
+    width="100%" height="100%">
+  </iframe>
+</div>
+
+<script type="text/javascript">
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+var JENKINS_URL = getParameterByName("JENKINS_URL")
+      || "https://deploy.tools.paas.alphagov.co.uk",
+    FOURTH_WALL_URL = getParameterByName("FOURTH_WALL_URL")
+      || "https://alphagov.github.io/fourth-wall",
+    LEFT_WIDTH = getParameterByName("LEFT_WIDTH") || "50",
+    RIGHT_WIDTH = getParameterByName("RIGHT_WIDTH") || "50";
+
+var loc = window.location.toString(),
+    urlParts = loc.split('?'),
+    queryString = urlParts[urlParts.length-1],
+    jenkinsIframe = document.getElementById("jenkins"),
+    pullRequestsIframe = document.getElementById("pull-requests");
+
+    jenkinsIframe.src = JENKINS_URL + "/view/Build%20Monitor%20View/";
+    pullRequestsIframe.src = FOURTH_WALL_URL + "?" + queryString;
+
+    document.getElementById("box-left").style.width = LEFT_WIDTH + "%";
+    document.getElementById("box-right").style.width = RIGHT_WIDTH + "%";
+</script>
+
+</body>
+</html>
