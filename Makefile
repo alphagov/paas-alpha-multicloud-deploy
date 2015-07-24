@@ -15,7 +15,7 @@ ansible-galaxy:
 	ansible-galaxy install -r requirements.yml --force
 
 vagrant-up:
-	DEPLOY_ENV=development vagrant up --provision
+	vagrant up --provision
 
 aws: aws-provision ansible-galaxy site
 
@@ -23,7 +23,7 @@ aws-provision:
 	ansible-playbook -i localhost, aws-provision.yml -v
 
 site: 
-	DEPLOY_ENV=ci ansible-playbook -i ec2.py site.yml -v
+	ansible-playbook -i ec2.py site.yml -v
 
 import-gpg-keys:
 	$(foreach var, \
