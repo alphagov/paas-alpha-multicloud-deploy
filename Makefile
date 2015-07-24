@@ -1,7 +1,7 @@
 .PHONY: all \
 	vagrant clean-roles ansible-galaxy \
 	vagrant-up aws aws-provision site \
-	import-gpg-keys recrypt
+	import-gpg-keys recrypt vagrant-provision
 
 all: 
 	@echo "Please provide a target: vagrant|aws"
@@ -16,6 +16,9 @@ ansible-galaxy:
 
 vagrant-up:
 	vagrant up --provision
+
+vagrant-provision:
+	vagrant provision
 
 aws: aws-provision ansible-galaxy site
 
