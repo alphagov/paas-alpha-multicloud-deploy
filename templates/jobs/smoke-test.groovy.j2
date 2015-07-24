@@ -1,8 +1,8 @@
 job {
-  name '{{job_name}}'
-  description('Runs a smoke test against tsuru deployment {{ target }} on {{ platform }}')
+  name '{{ target_environment_name }}-smoke-test-{{ platform }}'
+  description('Runs a smoke test against tsuru deployment {{ target_environment_name }} on {{ platform }}')
   parameters {
-    stringParam("DEPLOY_ENV", "{{ target }}",
+    stringParam("DEPLOY_ENV", "{{ target_environment_name }}",
             "Indicate which environment you wish to run the test against")
     stringParam("TARGET_PLATFORM", "{{ platform }}",
             "Indicate which platform you wish to run the test against")

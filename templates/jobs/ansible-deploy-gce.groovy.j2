@@ -1,5 +1,5 @@
 job {
-  name 'ansible-deploy-gce'
+  name '{{ target_environment_name }}-ansible-deploy-gce'
   description('Run ansible against Google Compute Engine')
   parameters {
     stringParam("DEPLOY_ENV", "{{ target_environment_name }}",
@@ -16,9 +16,11 @@ job {
       createTag(false)
     }
   }
+{% if poll_scm is defined %}
   triggers {
-    scm("H/5 * * * *")
+    scm("{{ poll_scm }}")
   }
+{% endif %}
   wrappers {
     colorizeOutput()
   }

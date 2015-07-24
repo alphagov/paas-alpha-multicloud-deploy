@@ -1,5 +1,5 @@
 job {
-  name 'ansible-deploy-aws'
+  name '{{ target_environment_name }}-ansible-deploy-aws'
   description('Run ansible against Amazon EC2')
   parameters {
     stringParam("DEPLOY_ENV", "{{ target_environment_name }}",
@@ -16,9 +16,11 @@ job {
       createTag(false)
     }
   }
+{% if poll_scm is defined %}
   triggers {
-    scm("H/5 * * * *")
+    scm("{{ poll_scm }}")
   }
+{% endif %}
   wrappers {
     colorizeOutput()
   }

@@ -111,46 +111,67 @@
     # We use include in order to override variables, templates don't support that.
     - include: jenkins_job.yml
       vars:
-        job_name: terraform-deploy
+        job_name: ci-terraform-deploy
+        job_template: terraform-deploy
+        target_environment_name: ci
+        poll_scm: "H/5 * * * *"
     - include: jenkins_job.yml
       vars:
-        job_name: ansible-deploy-aws
+        job_name: demo-terraform-deploy
+        job_template: terraform-deploy
+        target_environment_name: demo
     - include: jenkins_job.yml
       vars:
-        job_name: ansible-deploy-gce
+        job_name: ci-ansible-deploy-aws
+        job_template: ansible-deploy-aws
+        target_environment_name: ci
+        poll_scm: "H/5 * * * *"
     - include: jenkins_job.yml
       vars:
-        job_name: demo-env-deploy
+        job_name: ci-ansible-deploy-gce
+        job_template: ansible-deploy-gce
+        target_environment_name: ci
+        poll_scm: "H/5 * * * *"
     - include: jenkins_job.yml
       vars:
-        job_name: smoke-test-ci-aws
+        job_name: demo-ansible-deploy-aws
+        job_template: ansible-deploy-aws
+        target_environment_name: demo
+    - include: jenkins_job.yml
+      vars:
+        job_name: demo-ansible-deploy-gce
+        job_template: ansible-deploy-gce
+        target_environment_name: demo
+    - include: jenkins_job.yml
+      vars:
+        job_name: ci-smoke-test-aws
         job_template: smoke-test
         platform: "aws"
-        target: "ci"
+        target_environment_name: ci
         upstream_jobs:
-        - "ansible-deploy-aws"
+        - "ci-ansible-deploy-aws"
     - include: jenkins_job.yml
       vars:
-        job_name: smoke-test-ci-gce
+        job_name: ci-smoke-test-gce
         job_template: smoke-test
         platform: "gce"
-        target: "ci"
+        target_environment_name: ci
         upstream_jobs:
-        - "ansible-deploy-gce"
+        - "ci-ansible-deploy-gce"
     - include: jenkins_job.yml
       vars:
-        job_name: smoke-test-demo-aws
+        job_name: demo-smoke-test-aws
         job_template: smoke-test
         platform: "aws"
-        target: "demo"
+        target_environment_name: demo
         build_interval: "H/2 * * * *"
         email_notification_address: "multi-cloud-paas-demo@digital.cabinet-office.gov.uk"
     - include: jenkins_job.yml
       vars:
-        job_name: smoke-test-demo-gce
+        job_name: demo-smoke-test-gce
         job_template: smoke-test
         platform: "gce"
-        target: "demo"
+        target_environment_name: demo
         build_interval: "H/2 * * * *"
         email_notification_address: "multi-cloud-paas-demo@digital.cabinet-office.gov.uk"
     - include: jenkins_view.yml
