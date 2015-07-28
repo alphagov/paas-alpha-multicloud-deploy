@@ -1,7 +1,6 @@
 ---
 ami_id: "ami-47a23a30"
 
-target_environment_name: "{{ lookup('env','DEPLOY_ENV') }}"
 demo_environment_name: "demo"
 reference_name: "master"
 
@@ -9,7 +8,7 @@ ssh_key_name: multicloud-deploy
 ec2_access_key: lookup('env', 'AWS_ACCESS_KEY_ID')
 ec2_secret_key: lookup('env', 'AWS_SECRET_ACCESS_KEY')
 
-java_home: "/usr/lib/jvm/java-7-openjdk-amd64/jre" 
+java_home: "/usr/lib/jvm/java-7-openjdk-amd64/jre"
 keystore_password: "changeit"
 
 github_web_uri: "https://github.com"
@@ -58,7 +57,7 @@ permissions:
     - hudson.model.Computer.Build
     - hudson.model.Item.Cancel
     - com.cloudbees.plugins.credentials.CredentialsProvider.Update
-    - hudson.model.Run.Update  
+    - hudson.model.Run.Update
   github_orgs:
     - hudson.model.View.Create
     - hudson.model.View.Read
