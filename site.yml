@@ -177,6 +177,16 @@
     - include: jenkins_view.yml
       vars:
         view_name: build-monitor
+    - include: jenkins_view.yml
+      vars:
+        environment_regex: '^ci-.*'
+        view_name: ci-view
+        view_template: environment-view
+    - include: jenkins_view.yml
+      vars:
+        environment_regex: '^demo-.*'
+        view_name: demo-view
+        view_template: environment-view
 
     - name: execute dsl seed job for vagrant
       shell: "sleep 20 && curl -X POST 'http://127.0.0.1:8080/job/default-dsl-job/build'"
