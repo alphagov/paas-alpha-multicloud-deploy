@@ -25,7 +25,7 @@
       - role-strategy
       - ansicolor
       - build-monitor-plugin
-      - cloudbees-folder
+
     nginx_sites:
       ssl_reverse_proxy:
         - listen 443 ssl
@@ -178,17 +178,8 @@
       vars:
         view_name: build-monitor
 
-    - name: enable dsl seed job for vagrant
-      shell: "curl -X POST 'http://127.0.0.1:8080/job/default-dsl-job/enable'"
-      when: vagrant is defined
     - name: execute dsl seed job for vagrant
       shell: "sleep 20 && curl -X POST 'http://127.0.0.1:8080/job/default-dsl-job/build'"
-      when: vagrant is defined
-    - name: create groovy script to disable all jenkins jobs for vagrant
-      copy: dest=~/disable_all_jobs.groovy src=files/disable_all_jobs.groovy
-      when: vagrant is defined
-    - name: disable all jobs
-      shell: "sleep 20 && curl -X POST 'http://127.0.0.1:8080/scriptText' -d \"script=$(cat ~/disable_all_jobs.groovy)\""
       when: vagrant is defined
     - name: create jenkins .ssh directory
       file: path=/var/lib/jenkins/.ssh state=directory mode=0775 owner="jenkins"

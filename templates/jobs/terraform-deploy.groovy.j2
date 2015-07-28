@@ -1,6 +1,9 @@
 job {
   name '{{ target_environment_name }}-terraform-deploy'
   description('Deploy and automatically update Terraform environments upon repository changes')
+  {% if vagrant is defined %}
+    disabled(shouldDisable = true)
+  {% endif %}
   parameters {
     choiceParam("action", ["apply", "destroy"],
                 "Select if you want to apply changes to environments or destroy them.")
