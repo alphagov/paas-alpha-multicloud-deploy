@@ -1,6 +1,9 @@
 job {
-  name 'terraform-deploy'
+  name '{{ target_environment_name }}-terraform-deploy'
   description('Deploy and automatically update Terraform environments upon repository changes')
+  {% if vagrant is defined %}
+    disabled(shouldDisable = true)
+  {% endif %}
   parameters {
     choiceParam("action", ["apply", "destroy"],
                 "Select if you want to apply changes to environments or destroy them.")
@@ -18,16 +21,18 @@ job {
       createTag(false)
     }
   }
+{% if poll_scm is defined %}
   triggers {
-    scm("H/5 * * * *")
+    scm("{{ poll_scm }}")
   }
+{% endif %}
   wrappers {
     colorizeOutput()
   }
   publishers {
     mailer("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk", false, true)
     downstreamParameterized {
-      trigger("ansible-deploy-aws, ansible-deploy-gce", 'SUCCESS', true) {
+      trigger("{{ target_environment_name }}-ansible-deploy-aws, {{ target_environment_name }}-ansible-deploy-gce", 'SUCCESS', true) {
         currentBuild()
       }
     }

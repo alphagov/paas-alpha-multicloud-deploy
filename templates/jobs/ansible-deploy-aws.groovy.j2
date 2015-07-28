@@ -1,6 +1,9 @@
 job {
-  name 'ansible-deploy-aws'
+  name '{{ target_environment_name }}-ansible-deploy-aws'
   description('Run ansible against Amazon EC2')
+{% if vagrant is defined %}
+  disabled(shouldDisable = true)
+{% endif %}
   parameters {
     stringParam("DEPLOY_ENV", "{{ target_environment_name }}",
             "Select which environment you wish to run ansible against")
@@ -16,9 +19,11 @@ job {
       createTag(false)
     }
   }
+{% if poll_scm is defined %}
   triggers {
-    scm("H/5 * * * *")
+    scm("{{ poll_scm }}")
   }
+{% endif %}
   wrappers {
     colorizeOutput()
   }
