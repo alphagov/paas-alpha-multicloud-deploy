@@ -4,6 +4,12 @@ listView(' {{ view_name }}') {
         regex('{{ environment_regex }}')
     }
     columns {
+      status()
+      weather()
       name()
+      lastSuccess()
+      lastFailure()
+      lastDuration()
+      buildButton()
     }
 }
