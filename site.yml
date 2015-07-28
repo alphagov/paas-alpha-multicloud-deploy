@@ -180,12 +180,12 @@
     - include: jenkins_view.yml
       vars:
         environment_regex: '^ci-.*'
-        view_name: ci-view
+          view_name: ci
         view_template: environment-view
     - include: jenkins_view.yml
       vars:
         environment_regex: '^demo-.*'
-        view_name: demo-view
+        view_name: demo
         view_template: environment-view
 
     - name: execute dsl seed job for vagrant
