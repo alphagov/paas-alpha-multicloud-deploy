@@ -1,0 +1,15 @@
+listView(' {{ view_name }}') {
+    description('{{ view_name }}')
+    jobs {
+        regex('{{ environment_regex }}')
+    }
+    columns {
+      status()
+      weather()
+      name()
+      lastSuccess()
+      lastFailure()
+      lastDuration()
+      buildButton()
+    }
+}
