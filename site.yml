@@ -174,6 +174,20 @@
         target_environment_name: demo
         build_interval: "H/2 * * * *"
         email_notification_address: "multi-cloud-paas-demo@digital.cabinet-office.gov.uk"
+    - include: jenkins_job.yml
+      vars:
+        job_name: suspend-aws-environments
+        job_template: suspend-environments
+        platform: "aws"
+        exclude_env: "demo ci"
+        cron_suspend_time: "0 19 * * *"
+    - include: jenkins_job.yml
+      vars:
+        job_name: suspend-gce-environments
+        job_template: suspend-environments
+        platform: "gce"
+        exclude_env: "demo ci"
+        cron_suspend_time: "0 19 * * *"
     - include: jenkins_view.yml
       vars:
         view_name: build-monitor
