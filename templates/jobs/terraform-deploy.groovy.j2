@@ -52,6 +52,7 @@ cp ~/.account.json gce/account.json
 # Terraform
 set -e
 [[ ${action} == "destroy" ]] && extraopts="-force"
+make prep
 
 # GCE
 cd gce
