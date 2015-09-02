@@ -66,7 +66,7 @@ ENVIRONMENTS=`echo "$NAT_HOSTS" | sed 's/-tsuru-nat.*// ; s/.\\+"//'`
 
 # 2. Exclude
 EXC=`echo "$EXCLUDE_ENV" | sed "s/ /|/g"`
-ENV=`echo "$ENVIRONMENTS" | grep -Ev $EXC`
+ENV=`echo "$ENVIRONMENTS" | grep -Ev $EXC || echo`
 
 # 3. Suspend
 echo "Suspending environments on {{ platform }}:"
