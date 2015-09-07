@@ -78,7 +78,6 @@ for environment in $ENV ; do
   result=`expr $? + $result`
 done
 
-kill ${SSH_AGENT_PID}
 exit $result
 ''')
   }
