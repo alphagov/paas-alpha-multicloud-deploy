@@ -1,0 +1,66 @@
+job {
+  name '{{ job_name }}'
+  description('Deploy and automatically update Cloud Foundry environment upon repository changes')
+  {% if vagrant is defined %}
+    disabled(shouldDisable = true)
+  {% endif %}
+  parameters {
+    stringParam("DEPLOY_ENV", "{{ target_environment_name }}",
+            "Select which environment you wish to run against")
+    stringParam("REF_NAME", "{{ reference_name }}",
+            "Select which branch or tag you wish to use")
+  }
+  scm {
+    git {
+      remote {
+	url('https://github.com/alphagov/cf-terraform.git')
+      }
+      branch('${REF_NAME}')
+      createTag(false)
+    }
+  }
+{% if poll_scm is defined %}
+  triggers {
+    scm("{{ poll_scm }}")
+  }
+{% endif %}
+  wrappers {
+    colorizeOutput()
+  }
+  publishers {
+    mailer("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk", false, true)
+    downstreamParameterized {
+      trigger("ci-cf-smoke-and-destroy-{{ target_environment_name }}-{{ platform }}", 'SUCCESS', true) {
+        currentBuild()
+      }
+    }
+  }
+  steps {
+shell('''#!/bin/bash
+
+echo Set-up ssh keys and credentials
+mkdir -p gce/ssh aws/ssh
+cp ~/.ssh/* gce/ssh
+cp ~/.ssh/* aws/ssh
+cp ~/.account.json gce/account.json
+. ~/.aws_credentials
+export TF_VAR_AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+export TF_VAR_AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+export TF_VAR_GCE_INTEROPERABILITY_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+export TF_VAR_GCE_INTEROPERABILITY_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+export TF_VAR_GCE_INTEROPERABILITY_HOST=s3-eu-west-1.amazonaws.com
+
+echo Setting up ssh-agent and cleanup trap
+eval $(ssh-agent) && ssh-add ~/.ssh/insecure-deployer
+set -e
+trap "kill ${SSH_AGENT_PID}" ERR
+
+echo Retrieving Terraform state
+ln -sf ~/${DEPLOY_ENV}_{{ platform }}.tfstate {{ platform }}/${DEPLOY_ENV}.tfstate
+ln -sf ~/${DEPLOY_ENV}_{{ platform }}.tfstate.backup {{ platform }}/${DEPLOY_ENV}.tfstate.backup
+
+make {{ platform }} DEPLOY_ENV=${DEPLOY_ENV} ROOT_PASS_DIR=jenkins
+''')
+  }
+
+}
