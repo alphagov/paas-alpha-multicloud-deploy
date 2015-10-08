@@ -84,6 +84,8 @@
       args:
         chdir: "/tmp/password-store-{{ password_store_version }}"
       when: not pass_location.stat.exists
+    - git: repo=git@github.gds:multicloudpaas/credentials.git dest=~/.paas-pass
+      sudo_user: jenkins
     - name: download terraform
       get_url:
         dest="/tmp/{{ terraform_filename }}" mode=0440
