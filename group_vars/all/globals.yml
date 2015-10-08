@@ -78,3 +78,5 @@ roles:
     - admin
   github_orgs:
     - my-github-org
+
+password_store_version: "1.6.5"

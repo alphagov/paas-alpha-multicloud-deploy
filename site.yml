@@ -64,6 +64,22 @@
         - gnupg-agent
         - pwgen
         - pinentry-curses
+    - name: Test if pass is installed
+      stat: path=/usr/bin/pass
+      register: pass_location
+    - name: download password-store
+      get_url:
+        dest="/tmp/{{ password_store_version }}.tar.gz" mode=0440
+        url="https://github.com/zx2c4/password-store/archive/{{ password_store_version }}.tar.gz"
+      when: not pass_location.stat.exists
+    - name: Unpack password-store
+      unarchive: src="/tmp/{{ password_store_version }}.tar.gz" dest=/tmp copy=no
+      when: not pass_location.stat.exists
+    - name: Build and install password-store
+      shell: "make install"
+      args:
+        chdir: "/tmp/password-store-{{ password_store_version }}"
+      when: not pass_location.stat.exists
     - name: download terraform
       get_url:
         dest="/tmp/{{ terraform_filename }}" mode=0440
