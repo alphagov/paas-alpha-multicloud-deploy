@@ -50,6 +50,10 @@
         - proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for
         - proxy_set_header X-Forwarded-Proto https
   tasks:
+    - name: Setup SSH private key
+      copy: content="{{ jenkins_ssh_private_key }}" dest=/var/lib/jenkins/.ssh/id_rsa
+    - name: Setup SSH public key
+      copy: content="{{ jenkins_ssh_public_key }}" dest=/var/lib/jenkins/.ssh/id_rsa.pub
     - name: install required packages
       action: apt pkg={{item}} state=installed
       with_items:
