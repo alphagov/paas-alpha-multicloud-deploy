@@ -8,6 +8,7 @@
     - jdauphant.nginx
     - { role: openconnect, when: vagrant is not defined }
     - role: rvm_io.rvm1-ruby
+      rvm1_rvm_check_for_updates: False
       rvm1_rubies:
       - 'ruby-2.2.2'
 
@@ -50,10 +51,15 @@
         - proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for
         - proxy_set_header X-Forwarded-Proto https
   tasks:
+    - name: Create SSH directory
+      file: path=/var/lib/jenkins/.ssh state=directory mode=0700 owner=jenkins
+      sudo_user: jenkins
     - name: Setup SSH private key
-      copy: content="{{ jenkins_ssh_private_key }}" dest=/var/lib/jenkins/.ssh/id_rsa
+      copy: content="{{ jenkins_ssh_private_key }}" dest=/var/lib/jenkins/.ssh/id_rsa owner=jenkins mode=0600
+      sudo_user: jenkins
     - name: Setup SSH public key
-      copy: content="{{ jenkins_ssh_public_key }}" dest=/var/lib/jenkins/.ssh/id_rsa.pub
+      copy: content="{{ jenkins_ssh_public_key }}" dest=/var/lib/jenkins/.ssh/id_rsa.pub owner=jenkins mode=0600
+      sudo_user: jenkins
     - name: install required packages
       action: apt pkg={{item}} state=installed
       with_items:
@@ -85,17 +91,21 @@
         chdir: "/tmp/password-store-{{ password_store_version }}"
       when: not "{{ password_store_version }}" in pass_version.stdout
     - name: Cleanup pass temporary files
-      file: src={{ item }} state=absent
+      file: path={{ item }} state=absent
       with_items:
         - "/tmp/{{ password_store_version }}.tar.gz"
         - "/tmp/password-store-{{ password_store_version }}"
       when: not "{{ password_store_version }}" in pass_version.stdout
-    - git: repo=git@github.gds:multicloudpaas/credentials.git dest=~/.paas-pass
+    - git: repo=git@github.gds:multicloudpaas/credentials.git dest=~/.paas-pass accept_hostkey=True
       sudo_user: jenkins
+    - name: Test if terraform is installed
+      shell: /usr/local/bin/terraform --version || echo terraform not installed
+      register: terraform_output
     - name: download terraform
       get_url:
-        dest="/tmp/{{ terraform_filename }}" mode=0440
-        url="https://dl.bintray.com/mitchellh/terraform/{{ terraform_filename }}"
+        dest="/tmp/terraform_{{ terraform_version }}_linux_amd64.zip" mode=0440
+        url="https://dl.bintray.com/mitchellh/terraform/terraform_{{ terraform_version }}_linux_amd64.zip"
+      when: not "{{ terraform_version }}" in terraform_output.stdout
       notify:
         - unzip terraform to /usr/local/bin
     - name: Add tsuru repositories.
@@ -333,7 +343,7 @@
         - import gpg public key
   handlers:
     - name: unzip terraform to /usr/local/bin
-      unarchive: src="/tmp/{{ terraform_filename }}" dest=/usr/local/bin copy=no
+      unarchive: src="/tmp/terraform_{{ terraform_version }}_linux_amd64.zip" dest=/usr/local/bin copy=no
     - name: import certificate into java keystore
       shell: "keytool -import -alias {{ github_hostname }} -keystore {{ java_home }}/lib/security/cacerts -file ~/{{ github_hostname }}.crt -storepass {{ keystore_password }} -noprompt"
       when: vagrant is not defined
