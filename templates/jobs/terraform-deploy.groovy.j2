@@ -1,5 +1,4 @@
-job {
-  name '{{ target_environment_name }}-terraform-deploy'
+job('{{ target_environment_name }}-terraform-deploy') {
   description('Deploy and automatically update Terraform environments upon repository changes')
   {% if vagrant is defined %}
     disabled(shouldDisable = true)

@@ -1,5 +1,4 @@
-job {
-  name '{{ job_name }}'
+job('{{ job_name }}') {
   description('Suspends environments on {{ platform }}')
   {% if vagrant is defined %}
     disabled(shouldDisable = true)

@@ -1,5 +1,4 @@
-job {
-  name '{{ job_name }}'
+job('{{ job_name }}') {
   description('Deploy and automatically update Cloud Foundry environment upon repository changes')
   {% if vagrant is defined %}
     disabled(shouldDisable = true)
