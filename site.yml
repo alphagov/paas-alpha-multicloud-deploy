@@ -111,6 +111,46 @@
     # We use include in order to override variables, templates don't support that.
     - include: jenkins_job.yml
       vars:
+        job_name: ci-cf-destroy-daily-build-aws
+        job_template: cf-destroy
+        target_environment_name: daily-build
+        platform: aws
+    - include: jenkins_job.yml
+      vars:
+        job_name: ci-cf-destroy-daily-build-gce
+        job_template: cf-destroy
+        target_environment_name: daily-build
+        platform: gce
+    - include: jenkins_job.yml
+      vars:
+        job_name: ci-cf-smoke-and-destroy-daily-build-aws
+        job_template: smoke-test-cf
+        target_environment_name: daily-build
+        platform: aws
+        destroy: true
+    - include: jenkins_job.yml
+      vars:
+        job_name: ci-cf-smoke-and-destroy-daily-build-gce
+        job_template: smoke-test-cf
+        target_environment_name: daily-build
+        platform: gce
+        destroy: true
+    - include: jenkins_job.yml
+      vars:
+        job_name: ci-cf-deploy-daily-build-aws
+        job_template: cf-deploy
+        target_environment_name: daily-build
+        poll_scm: "0 7 * * 1-5"
+        platform: aws
+    - include: jenkins_job.yml
+      vars:
+        job_name: ci-cf-deploy-daily-build-gce
+        job_template: cf-deploy
+        target_environment_name: daily-build
+        poll_scm: "0 7 * * 1-5"
+        platform: gce
+    - include: jenkins_job.yml
+      vars:
         job_name: ci-terraform-deploy
         job_template: terraform-deploy
         target_environment_name: ci
