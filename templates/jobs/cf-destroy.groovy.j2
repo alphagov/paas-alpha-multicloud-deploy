@@ -7,6 +7,15 @@ job('{{ job_name }}') {
     stringParam("DEPLOY_ENV", "{{ target_environment_name }}",
             "Select which environment you wish to run against")
   }
+  scm {
+    git {
+      remote {
+    url('https://github.com/alphagov/cf-terraform.git')
+      }
+      branch('master')
+      createTag(false)
+    }
+  }
   wrappers {
     colorizeOutput()
   }
@@ -37,7 +46,7 @@ echo Retrieving Terraform state
 ln -sf ~/${DEPLOY_ENV}_{{ platform }}.tfstate {{ platform }}/${DEPLOY_ENV}.tfstate
 ln -sf ~/${DEPLOY_ENV}_{{ platform }}.tfstate.backup {{ platform }}/${DEPLOY_ENV}.tfstate.backup
 
-make destroy-{{ platform }} DEPLOY_ENV=${DEPLOY_ENV} ROOT_PASS_DIR=jenkins
+make destroy-{{ platform }} DEPLOY_ENV=${DEPLOY_ENV} ROOT_PASS_DIR=jenkins SKIP_CONFIRM=1
 ''')
   }
 
