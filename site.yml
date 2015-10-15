@@ -79,11 +79,11 @@
       register: pass_version
     - name: download password-store
       get_url:
-        dest="/tmp/{{ password_store_version }}.tar.gz" mode=0440
-        url="https://github.com/zx2c4/password-store/archive/{{ password_store_version }}.tar.gz"
+        dest="/tmp/{{ password_store_version }}.tar.xz" mode=0440
+        url="http://git.zx2c4.com/password-store/snapshot/password-store-{{ password_store_version }}.tar.xz"
       when: not "{{ password_store_version }}" in pass_version.stdout
     - name: Unpack password-store
-      unarchive: src="/tmp/{{ password_store_version }}.tar.gz" dest=/tmp copy=no
+      unarchive: src="/tmp/{{ password_store_version }}.tar.xz" dest=/tmp copy=no
       when: not "{{ password_store_version }}" in pass_version.stdout
     - name: Build and install password-store
       shell: "make install"
@@ -93,7 +93,7 @@
     - name: Cleanup pass temporary files
       file: path={{ item }} state=absent
       with_items:
-        - "/tmp/{{ password_store_version }}.tar.gz"
+        - "/tmp/{{ password_store_version }}.tar.xz"
         - "/tmp/password-store-{{ password_store_version }}"
       when: not "{{ password_store_version }}" in pass_version.stdout
     - git: repo=git@github.gds:multicloudpaas/credentials.git dest=~/.paas-pass accept_hostkey=True
