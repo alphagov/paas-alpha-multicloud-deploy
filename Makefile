@@ -23,7 +23,7 @@ vagrant-provision:
 aws: aws-provision ansible-galaxy site
 
 aws-provision: 
-	ansible-playbook -i localhost, aws-provision.yml -v
+	ansible-playbook -i empty_inventory aws-provision.yml -v
 
 site: 
 	ansible-playbook -i ec2.py site.yml -v
