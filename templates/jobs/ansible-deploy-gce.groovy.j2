@@ -1,5 +1,4 @@
-job {
-  name '{{ target_environment_name }}-ansible-deploy-gce'
+job('{{ target_environment_name }}-ansible-deploy-gce') {
   description('Run ansible against Google Compute Engine')
   {% if vagrant is defined %}
     disabled(shouldDisable = true)

@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-MEMORY_DEFAULT = 2048
+MEMORY_DEFAULT = 1024
 
 Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/trusty64"

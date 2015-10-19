@@ -1,5 +1,4 @@
-job {
-  name '{{ target_environment_name }}-smoke-test-{{ platform }}'
+job('{{ target_environment_name }}-smoke-test-{{ platform }}') {
   description('Runs a smoke test against tsuru deployment {{ target_environment_name }} on {{ platform }}')
   {% if vagrant is defined %}
     disabled(shouldDisable = true)

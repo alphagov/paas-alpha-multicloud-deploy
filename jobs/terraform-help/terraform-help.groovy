@@ -1,5 +1,4 @@
-job {
-  name 'terraform-help'
+job('terraform-help') {
   scm {
     git {
       remote {

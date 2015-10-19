@@ -1,5 +1,4 @@
-job {
-  name '{{ target_environment_name }}-ansible-deploy-aws'
+job('{{ target_environment_name }}-ansible-deploy-aws') {
   description('Run ansible against Amazon EC2')
 {% if vagrant is defined %}
   disabled(shouldDisable = true)
