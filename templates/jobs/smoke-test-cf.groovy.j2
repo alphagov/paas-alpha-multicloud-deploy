@@ -28,13 +28,18 @@ job('{{ job_name }}') {
   }
   publishers {
     mailer("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk", false, true)
-    {% if destroy is defined and destroy %}
     downstreamParameterized {
-      trigger("ci-cf-destroy-{{ target_environment_name }}-{{ platform }}", 'SUCCESS', true) {
-        currentBuild()
-      }
+      {% if destroy is defined and destroy %}
+        trigger("ci-cf-destroy-{{ target_environment_name }}-{{ platform }}", 'SUCCESS', true) {
+          currentBuild()
+        }
+      {% endif %}
+      {% if downstream_parameterized_trigger_job is defined %}
+        trigger("{{ downstream_parameterized_trigger_job }}", 'SUCCESS', true) {
+          currentBuild()
+        }
+      {% endif %}
     }
-    {% endif %}
   }
   steps {
 shell('''#!/bin/bash
