@@ -268,6 +268,36 @@
         platform: "gce"
         exclude_env: "demo ci"
         cron_suspend_time: "0 19 * * *"
+    - include: jenkins_job.yml
+      vars:
+        job_name: stage-trial-cf-deploy-aws
+        job_template: cf-deploy
+        target_environment_name: stage-trial
+        platform: aws
+        poll_scm: "H/5 * * * *"
+        downstream_parameterized_trigger_job: stage-trial-cf-smoke-test-aws
+    - include: jenkins_job.yml
+      vars:
+        job_name: stage-trial-cf-smoke-test-aws
+        job_template: smoke-test-cf
+        target_environment_name: stage-trial
+        platform: aws
+        destroy: false
+        downstream_parameterized_trigger_job: trial-cf-deploy-aws
+    - include: jenkins_job.yml
+      vars:
+        job_name: trial-cf-deploy-aws
+        job_template: cf-deploy
+        target_environment_name: trial
+        platform: aws
+        downstream_parameterized_trigger_job: trial-cf-smoke-test-aws
+    - include: jenkins_job.yml
+      vars:
+        job_name: trial-cf-smoke-test-aws
+        job_template: smoke-test-cf
+        target_environment_name: trial
+        platform: aws
+        destroy: false
     - include: jenkins_view.yml
       vars:
         view_name: build-monitor
