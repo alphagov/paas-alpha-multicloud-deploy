@@ -6,13 +6,15 @@ job('{{ job_name }}') {
   parameters {
     stringParam("DEPLOY_ENV", "{{ target_environment_name }}",
             "Select which environment you wish to run against")
+    stringParam("REF_NAME", "{{ reference_name }}",
+            "Select which branch or tag you wish to use")
   }
   scm {
     git {
       remote {
     url('https://github.com/alphagov/cf-terraform.git')
       }
-      branch('master')
+      branch('${REF_NAME}')
       createTag(false)
     }
   }
