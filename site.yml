@@ -165,14 +165,14 @@
         job_template: smoke-test-cf
         target_environment_name: daily-build
         platform: aws
-        destroy: true
+        downstream_parameterized_trigger_job: ci-cf-destroy-daily-build-aws
     - include: jenkins_job.yml
       vars:
         job_name: ci-cf-smoke-and-destroy-daily-build-gce
         job_template: smoke-test-cf
         target_environment_name: daily-build
         platform: gce
-        destroy: true
+        downstream_parameterized_trigger_job: ci-cf-destroy-daily-build-gce
     - include: jenkins_job.yml
       vars:
         job_name: ci-cf-deploy-daily-build-aws
@@ -180,6 +180,7 @@
         target_environment_name: daily-build
         poll_scm: "0 7 * * 1-5"
         platform: aws
+        downstream_parameterized_trigger_job: ci-cf-smoke-and-destroy-daily-build-aws
     - include: jenkins_job.yml
       vars:
         job_name: ci-cf-deploy-daily-build-gce
@@ -187,6 +188,7 @@
         target_environment_name: daily-build
         poll_scm: "0 7 * * 1-5"
         platform: gce
+        downstream_parameterized_trigger_job: ci-cf-smoke-and-destroy-daily-build-gce
     - include: jenkins_job.yml
       vars:
         job_name: ci-terraform-deploy
@@ -266,6 +268,36 @@
         platform: "gce"
         exclude_env: "demo ci"
         cron_suspend_time: "0 19 * * *"
+    - include: jenkins_job.yml
+      vars:
+        job_name: stage-trial-cf-deploy-aws
+        job_template: cf-deploy
+        target_environment_name: stage-trial
+        platform: aws
+        poll_scm: "H/5 * * * *"
+        downstream_parameterized_trigger_job: stage-trial-cf-smoke-test-aws
+    - include: jenkins_job.yml
+      vars:
+        job_name: stage-trial-cf-smoke-test-aws
+        job_template: smoke-test-cf
+        target_environment_name: stage-trial
+        platform: aws
+        destroy: false
+        downstream_parameterized_trigger_job: trial-cf-deploy-aws
+    - include: jenkins_job.yml
+      vars:
+        job_name: trial-cf-deploy-aws
+        job_template: cf-deploy
+        target_environment_name: trial
+        platform: aws
+        downstream_parameterized_trigger_job: trial-cf-smoke-test-aws
+    - include: jenkins_job.yml
+      vars:
+        job_name: trial-cf-smoke-test-aws
+        job_template: smoke-test-cf
+        target_environment_name: trial
+        platform: aws
+        destroy: false
     - include: jenkins_view.yml
       vars:
         view_name: build-monitor
@@ -278,6 +310,16 @@
       vars:
         environment_regex: '^demo-.*'
         view_name: demo
+        view_template: environment-view
+    - include: jenkins_view.yml
+      vars:
+        environment_regex: '^trial-.*'
+        view_name: trial
+        view_template: environment-view
+    - include: jenkins_view.yml
+      vars:
+        environment_regex: '^stage-.*'
+        view_name: stage
         view_template: environment-view
 
     - name: execute dsl seed job for vagrant
