@@ -165,14 +165,14 @@
         job_template: smoke-test-cf
         target_environment_name: daily-build
         platform: aws
-        destroy: true
+        downstream_parameterized_trigger_job: ci-cf-destroy-daily-build-aws
     - include: jenkins_job.yml
       vars:
         job_name: ci-cf-smoke-and-destroy-daily-build-gce
         job_template: smoke-test-cf
         target_environment_name: daily-build
         platform: gce
-        destroy: true
+        downstream_parameterized_trigger_job: ci-cf-destroy-daily-build-gce
     - include: jenkins_job.yml
       vars:
         job_name: ci-cf-deploy-daily-build-aws
