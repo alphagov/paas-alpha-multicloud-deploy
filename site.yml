@@ -282,7 +282,6 @@
         job_template: smoke-test-cf
         target_environment_name: stage-trial
         platform: aws
-        destroy: false
         downstream_parameterized_trigger_job: trial-cf-deploy-aws
     - include: jenkins_job.yml
       vars:
@@ -297,7 +296,6 @@
         job_template: smoke-test-cf
         target_environment_name: trial
         platform: aws
-        destroy: false
     - include: jenkins_view.yml
       vars:
         view_name: build-monitor
