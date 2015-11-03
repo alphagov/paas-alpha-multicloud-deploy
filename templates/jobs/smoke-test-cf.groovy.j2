@@ -18,11 +18,16 @@ job('{{ job_name }}') {
       createTag(false)
     }
   }
-{% if poll_scm is defined %}
+
   triggers {
-    scm("{{ poll_scm }}")
+    {% if poll_scm is defined %}
+      scm("{{ poll_scm }}")
+    {% endif %}
+    {% if build_interval is defined %}
+      cron("{{ build_interval }}")
+    {% endif %}
   }
-{% endif %}
+
   wrappers {
     colorizeOutput()
   }
