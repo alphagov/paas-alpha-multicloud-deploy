@@ -26,6 +26,7 @@
       - role-strategy
       - ansicolor
       - build-monitor-plugin
+      - build-timeout
 
     nginx_sites:
       ssl_reverse_proxy:

@@ -30,6 +30,14 @@ job('{{ job_name }}') {
 
   wrappers {
     colorizeOutput()
+    {% if build_timeout is not defined %}
+    {% set build_timeout = '5' %}
+    {% endif %}
+    timeout {
+      absolute({{ build_timeout }})
+      failBuild()
+    }
+
   }
   publishers {
     mailer("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk", false, true)
