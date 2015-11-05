@@ -205,6 +205,13 @@
         target_environment_name: trial
     - include: jenkins_job.yml
       vars:
+        job_name: trial-smoke-test-aws
+        job_template: smoke-test
+        platform: "aws"
+        target_environment_name: trial
+        build_interval: "H/2 * * * *"
+    - include: jenkins_job.yml
+      vars:
         job_name: ci-terraform-deploy-aws
         job_template: terraform-deploy
         target_environment_name: ci
