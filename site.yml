@@ -192,6 +192,19 @@
         downstream_parameterized_trigger_job: ci-cf-smoke-and-destroy-daily-build-gce
     - include: jenkins_job.yml
       vars:
+        job_name: trial-terraform-deploy-aws
+        job_template: terraform-deploy
+        target_environment_name: trial
+        platform: aws
+        upstream_jobs:
+        - "ci-smoke-test-aws"
+    - include: jenkins_job.yml
+      vars:
+        job_name: trial-ansible-deploy-aws
+        job_template: ansible-deploy-aws
+        target_environment_name: trial
+    - include: jenkins_job.yml
+      vars:
         job_name: ci-terraform-deploy-aws
         job_template: terraform-deploy
         target_environment_name: ci
