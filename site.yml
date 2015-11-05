@@ -138,6 +138,8 @@
       template: dest=~/setup_mail.groovy src=templates/setup_mail.groovy.j2
       notify:
         - configure admin email and smtp server
+    - name: Wipe old dsl jobs
+      file: path=/var/lib/jenkins/jobs/default-dsl-job/workspace/jobs state=absent
     - name: copy default dsl seed config.xml to jenkins master
       copy: src=dsl/config.xml dest=/tmp/config.xml owner=jenkins group=jenkins mode=0644
     - name: create default dsl seed job
