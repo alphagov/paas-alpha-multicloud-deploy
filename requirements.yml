@@ -1,13 +1,14 @@
 # vim:ft=ansible:
 
-## from galaxy
-
-- src: geerlingguy.jenkins
+- src: https://github.com/geerlingguy/ansible-role-jenkins.git
   version: 1.2.3
-- src: jdauphant.nginx
+  name: geerlingguy.jenkins
+- src: https://github.com/jdauphant/ansible-role-nginx.git
   version: v1.3.4
+  name: jdauphant.nginx
 - src: https://github.com/alphagov/ansible-role-openconnect.git
   version: "0.1"
   name: openconnect
-- src: rvm_io.rvm1-ruby
+- src: https://github.com/rvm/rvm1-ansible.git
   version: v1.3.7
+  name: rvm_io.rvm1-ruby

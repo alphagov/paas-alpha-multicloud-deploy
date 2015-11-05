@@ -1,11 +1,11 @@
-job('{{ target_environment_name }}-terraform-deploy') {
-  description('Deploy and automatically update Terraform environments upon repository changes')
+job('{{ target_environment_name }}-terraform-deploy-{{ platform }}') {
+  description('Deploy and automatically update Terraform environments upon repository changes on {{ platform }}')
   {% if vagrant is defined %}
     disabled(shouldDisable = true)
   {% endif %}
   parameters {
     choiceParam("action", ["apply", "destroy"],
-                "Select if you want to apply changes to environments or destroy them.")
+            "Select if you want to apply changes to environments or destroy them.")
     stringParam("DEPLOY_ENV", "{{ target_environment_name }}",
             "Select which environment you wish to run terraform against")
     stringParam("REF_NAME", "{{ reference_name }}",
@@ -20,18 +20,23 @@ job('{{ target_environment_name }}-terraform-deploy') {
       createTag(false)
     }
   }
-{% if poll_scm is defined %}
   triggers {
+   {% if poll_scm is defined %}
     scm("{{ poll_scm }}")
+   {% endif %}
+   {% if upstream_jobs is defined %}
+   {% for upstream_job in upstream_jobs %}
+    upstream('{{ upstream_job }}','SUCCESS')
+   {% endfor %}
+   {% endif %}
   }
-{% endif %}
   wrappers {
     colorizeOutput()
   }
   publishers {
     mailer("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk", false, true)
     downstreamParameterized {
-      trigger("{{ target_environment_name }}-ansible-deploy-aws, {{ target_environment_name }}-ansible-deploy-gce", 'SUCCESS', true) {
+      trigger("{{ target_environment_name }}-ansible-deploy-{{ platform }}", 'SUCCESS', true) {
         currentBuild()
       }
     }
@@ -39,28 +44,23 @@ job('{{ target_environment_name }}-terraform-deploy') {
   steps {
     shell('''#!/bin/bash
 set -x
-home=`pwd`
-environment_name=${DEPLOY_ENV}
 
-# Set-up ssh keys and gce credentials
-mkdir -p gce/ssh aws/ssh
-cp ~/.ssh/* gce/ssh
-cp ~/.ssh/* aws/ssh
-cp ~/.account.json gce/account.json
+# Set-up ssh keys
+mkdir -p {{ platform }}/ssh
+cp ~/.ssh/* {{ platform }}/ssh
 
 # Terraform
 set -e
 [[ ${action} == "destroy" ]] && extraopts="-force"
 make prep
 
-# GCE
-cd gce
-terraform ${action} -var env=${environment_name} -input=false -state=${environment_name}-terraform.tfstate ${extraopts}
-
-# AWS
-cd ../aws
+cd {{ platform }}
+{% if platform == "gce" %}
+cp ~/.account.json ./account.json
+{% elif platform == "aws" %}
 . ~/.aws_credentials
-terraform ${action} -var env=${environment_name} -input=false -state=${environment_name}-terraform.tfstate ${extraopts}
+{% endif %}
+terraform ${action} -var env=${DEPLOY_ENV} -input=false -state=${DEPLOY_ENV}-terraform.tfstate ${extraopts}
 ''')
   }
 }
