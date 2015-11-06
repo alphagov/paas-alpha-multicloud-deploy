@@ -37,5 +37,6 @@ Vagrant.configure(2) do |config|
     ansible.extra_vars = { vagrant: true }
     ansible.groups = { "jenkins-master" => ["default"] }
     ansible.playbook = "site.yml"
+    ansible.verbose = "v"
   end
 end
