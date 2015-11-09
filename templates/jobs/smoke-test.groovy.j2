@@ -32,9 +32,18 @@ job('{{ target_environment_name }}-smoke-test-{{ platform }}') {
   }
   wrappers {
     colorizeOutput()
+    {% if build_timeout is not defined %}
+    {% set build_timeout = '5' %}
+    {% endif %}
+    timeout {
+      absolute({{ build_timeout }})
+      failBuild()
+    }
   }
   publishers {
+  {% if vagrant is not defined %}
     mailer("{{ email_notification_address | default("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk")}}")
+  {% endif %}
   }
   steps {
     shell('''#!/bin/bash

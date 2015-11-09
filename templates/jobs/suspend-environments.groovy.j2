@@ -23,7 +23,9 @@ job('{{ job_name }}') {
     colorizeOutput()
   }
   publishers {
+  {% if vagrant is not defined %}
     mailer("{{ email_notification_address | default("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk")}}")
+  {% endif %}
   }
   steps {
     shell('''#!/bin/bash

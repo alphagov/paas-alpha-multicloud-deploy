@@ -27,7 +27,9 @@ job('{{ target_environment_name }}-ansible-deploy-gce') {
     colorizeOutput()
   }
   publishers {
-    mailer("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk", false, true)
+  {% if vagrant is not defined %}
+    mailer("{{ email_notification_address | default("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk")}}")
+  {% endif %}
   }
   steps {
     shell('''#!/bin/bash

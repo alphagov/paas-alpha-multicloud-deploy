@@ -34,7 +34,9 @@ job('{{ target_environment_name }}-terraform-deploy-{{ platform }}') {
     colorizeOutput()
   }
   publishers {
-    mailer("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk", false, true)
+  {% if vagrant is not defined %}
+    mailer("{{ email_notification_address | default("the-multi-cloud-paas-team@digital.cabinet-office.gov.uk")}}")
+  {% endif %}
     downstreamParameterized {
       trigger("{{ target_environment_name }}-ansible-deploy-{{ platform }}", 'SUCCESS', true) {
         currentBuild()
