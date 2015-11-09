@@ -288,14 +288,14 @@
         job_name: suspend-aws-environments
         job_template: suspend-environments
         platform: "aws"
-        exclude_env: "demo ci"
+        exclude_env: "demo ci trial"
         cron_suspend_time: "0 19 * * *"
     - include: jenkins_job.yml
       vars:
         job_name: suspend-gce-environments
         job_template: suspend-environments
         platform: "gce"
-        exclude_env: "demo ci"
+        exclude_env: "demo ci trial"
         cron_suspend_time: "0 19 * * *"
     - include: jenkins_job.yml
       vars:
