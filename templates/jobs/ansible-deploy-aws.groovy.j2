@@ -59,7 +59,7 @@ pip install -Ur requirements.txt
 ./ec2.py --refresh-cache > /dev/null 2>&1 && echo done...
 
 [[ -f /usr/bin/figlet ]] && figlet Running ansible against ${DEPLOY_ENV} environment
-make aws
+make aws ARGS='-v'
 
 kill ${SSH_AGENT_PID}
 ''')
