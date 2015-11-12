@@ -56,8 +56,7 @@ virtualenv .venv
 [[ -f /usr/bin/figlet ]] && figlet Installing python dependencies
 pip install -Ur requirements.txt
 
-[[ -f /usr/bin/figlet ]] && \
- figlet Running ansible against ${DEPLOY_ENV} environment
+[[ -f /usr/bin/figlet ]] && figlet Running ansible against ${DEPLOY_ENV} environment
 make gce
 
 kill ${SSH_AGENT_PID}

@@ -55,12 +55,10 @@ virtualenv .venv
 [[ -f /usr/bin/figlet ]] && figlet Installing python dependencies
 pip install -Ur requirements.txt
 
-[[ -f /usr/bin/figlet ]] \
-  && figlet Refreshing ec2 inventory cache
+[[ -f /usr/bin/figlet ]] && figlet Refreshing ec2 inventory cache
 ./ec2.py --refresh-cache > /dev/null 2>&1 && echo done...
 
-[[ -f /usr/bin/figlet ]] \
-  && figlet Running ansible against ${DEPLOY_ENV} environment
+[[ -f /usr/bin/figlet ]] && figlet Running ansible against ${DEPLOY_ENV} environment
 make aws
 
 kill ${SSH_AGENT_PID}
