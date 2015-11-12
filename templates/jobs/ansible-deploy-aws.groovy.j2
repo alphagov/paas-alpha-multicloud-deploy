@@ -18,11 +18,16 @@ job('{{ target_environment_name }}-ansible-deploy-aws') {
       createTag(false)
     }
   }
-{% if poll_scm is defined %}
   triggers {
+   {% if poll_scm is defined %}
     scm("{{ poll_scm }}")
+   {% endif %}
+   {% if upstream_jobs is defined %}
+   {% for upstream_job in upstream_jobs %}
+    upstream('{{ upstream_job }}','SUCCESS')
+   {% endfor %}
+   {% endif %}
   }
-{% endif %}
   wrappers {
     colorizeOutput()
   }
