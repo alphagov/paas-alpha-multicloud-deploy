@@ -1,7 +1,7 @@
 # multicloud-deploy
 
 Ansible project to create and maintain a [Jenkins](https://jenkins-ci.org/)
-service that will be used to continuous deploy our [Tsuru](https://tsuru.io/) [environment](https://github.com/alphagov/tsuru-terraform).
+service that will be used to continuous deploy our [Cloudfoundry environment](https://github.com/alphagov/cf-terraform)
 
 This project uses the [Jenkins Job DSL](https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin) to define a job
 as code and store that job using a version management system.
@@ -124,13 +124,6 @@ github_cert: |
   -----BEGIN CERTIFICATE-----
   -----END CERTIFICATE-----
 
-secrets_py |
-  GCE_PARAMS = ('...@developer.gserviceaccount.com', '/path/to/gce_account.json')
-  GCE_KEYWORD_PARAMS = {'project': 'project_id'}  
-gce_account_certificate_pem |
-  -----BEGIN RSA PRIVATE KEY-----
-  -----END RSA PRIVATE KEY-----
-
 jenkins_gpg_secure_key: |
     -----BEGIN PGP PRIVATE KEY BLOCK-----
     Version: GnuPG v1
@@ -183,12 +176,9 @@ smtp_server: "aspmx.l.google.com"
 
 ## Credentials
 
-Some of the jobs we deploy require our AWS and [GCE](https://cloud.google.com/compute/) credentials along with the ssh keys. We deploy these to standard locations (jenkins home and ~/.ssh). The variables are optional - credentials will only get deployed when you define:
+Some of the jobs we deploy require our AWS credentials along with the ssh keys. We deploy these to standard locations (jenkins home and ~/.ssh). The variables are optional - credentials will only get deployed when you define:
 * `aws_credentials` - AWS credentials for your jobs in a form of shell include. You can include various formats.
-* `gce_account` - google compute engine account.json file
 * `deployer_key:`- deployer key with elements: `name:` - name of the key and `key:` - the key itself
-* `secrets_py` - [Google Compute Engine](https://cloud.google.com/compute/) [credentials for Ansible](http://docs.ansible.com/guide_gce.html#calling-modules-with-secrets-py)
-* `gce_account_certificate_pem` - [Google Compute Engine](https://cloud.google.com/compute/) service account private key
 
 For example:
 ```
@@ -196,27 +186,12 @@ aws_credentials: |
   export AWS_ACCESS_KEY_ID="mykey"
   export AWS_SECRET_ACCESS_KEY="mysecret"
 
-gce_account: |
-  {
-    "private_key_id": "deadb33f",
-    "private_key": "-----BEGIN PRIVATE KEY-----lotsofasciigibberish-----END PRIVATE KEY-----\n",
-    "client_email": "someuuid@developer.gserviceaccount.com",
-    "client_id": "someuuid.apps.googleusercontent.com",
-    "type": "service_account"
-  }
 deployer_key:
   name: "my-deployer"
   key: |
     -----BEGIN RSA PRIVATE KEY-----
 	yourkeyhere
     -----END RSA PRIVATE KEY-----
-
-secrets_py |
-  GCE_PARAMS = ('...@developer.gserviceaccount.com', '/path/to/gce_account.json')
-  GCE_KEYWORD_PARAMS = {'project': 'project_id'}  
-gce_account_certificate_pem |
-  -----BEGIN RSA PRIVATE KEY-----
-  -----END RSA PRIVATE KEY-----
 ```
 
 ## DNS
@@ -227,11 +202,8 @@ You can define `public_eip` variable to set the external IP of the server to the
 
 ## Deployment
 
-`make <PROVIDER_NAME>`
+`make aws`
 
-Where:
-
-- `<PROVIDER_NAME>` is: aws or gce
 
 ## Known bugs/issues
 
