@@ -140,7 +140,7 @@
       args:
         chdir: /tmp/
     - name: create jenkins seed job directory structure
-      copy: src=jobs dest=/var/lib/jenkins/jobs/default-dsl-job/workspace directory_mode=0750 mode=0640 owner=jenkins group=jenkins
+      file: path=/var/lib/jenkins/jobs/default-dsl-job/workspace state=directory mode=0750 owner=jenkins group=jenkins
     # Job definitions.
     # We use include in order to override variables, templates don't support that.
     - include: jenkins_job.yml
