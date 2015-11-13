@@ -109,13 +109,6 @@
       when: not "{{ terraform_version }}" in terraform_output.stdout
       notify:
         - unzip terraform to /usr/local/bin
-    - name: Add tsuru repositories.
-      apt_repository: repo='ppa:tsuru/ppa' update_cache=yes
-    - name: Install tsuru client packages
-      apt: update_cache=true name="{{ item }}"
-      with_items:
-      - tsuru-client
-      - tsuru-admin
     - name: add jenkins to rvm group
       user: name=jenkins groups=rvm append=yes
       notify:
@@ -158,24 +151,11 @@
         platform: aws
     - include: jenkins_job.yml
       vars:
-        job_name: ci-cf-destroy-daily-build-gce
-        job_template: cf-destroy
-        target_environment_name: daily-build
-        platform: gce
-    - include: jenkins_job.yml
-      vars:
         job_name: ci-cf-smoke-and-destroy-daily-build-aws
         job_template: smoke-test-cf
         target_environment_name: daily-build
         platform: aws
         downstream_parameterized_trigger_job: ci-cf-destroy-daily-build-aws
-    - include: jenkins_job.yml
-      vars:
-        job_name: ci-cf-smoke-and-destroy-daily-build-gce
-        job_template: smoke-test-cf
-        target_environment_name: daily-build
-        platform: gce
-        downstream_parameterized_trigger_job: ci-cf-destroy-daily-build-gce
     - include: jenkins_job.yml
       vars:
         job_name: ci-cf-deploy-daily-build-aws
@@ -184,128 +164,6 @@
         poll_scm: "0 7 * * 1-5"
         platform: aws
         downstream_parameterized_trigger_job: ci-cf-smoke-and-destroy-daily-build-aws
-    - include: jenkins_job.yml
-      vars:
-        job_name: ci-cf-deploy-daily-build-gce
-        job_template: cf-deploy
-        target_environment_name: daily-build
-        poll_scm: "0 7 * * 1-5"
-        platform: gce
-        downstream_parameterized_trigger_job: ci-cf-smoke-and-destroy-daily-build-gce
-    - include: jenkins_job.yml
-      vars:
-        job_name: trial-terraform-deploy-aws
-        job_template: terraform-deploy
-        target_environment_name: trial
-        platform: aws
-        upstream_jobs:
-        - "ci-smoke-test-aws"
-    - include: jenkins_job.yml
-      vars:
-        job_name: trial-ansible-deploy-aws
-        job_template: ansible-deploy-aws
-        target_environment_name: trial
-    - include: jenkins_job.yml
-      vars:
-        job_name: trial-smoke-test-aws
-        job_template: smoke-test
-        platform: "aws"
-        target_environment_name: trial
-        build_interval: "H/2 * * * *"
-    - include: jenkins_job.yml
-      vars:
-        job_name: ci-terraform-deploy-aws
-        job_template: terraform-deploy
-        target_environment_name: ci
-        poll_scm: "H/5 * * * *"
-        platform: aws
-    - include: jenkins_job.yml
-      vars:
-        job_name: ci-terraform-deploy-gce
-        job_template: terraform-deploy
-        target_environment_name: ci
-        poll_scm: "H/5 * * * *"
-        platform: gce
-    - include: jenkins_job.yml
-      vars:
-        job_name: demo-terraform-deploy-aws
-        job_template: terraform-deploy
-        target_environment_name: demo
-        platform: aws
-    - include: jenkins_job.yml
-      vars:
-        job_name: demo-terraform-deploy-gce
-        job_template: terraform-deploy
-        target_environment_name: demo
-        platform: gce
-    - include: jenkins_job.yml
-      vars:
-        job_name: ci-ansible-deploy-aws
-        job_template: ansible-deploy-aws
-        target_environment_name: ci
-        poll_scm: "H/5 * * * *"
-    - include: jenkins_job.yml
-      vars:
-        job_name: ci-ansible-deploy-gce
-        job_template: ansible-deploy-gce
-        target_environment_name: ci
-        poll_scm: "H/5 * * * *"
-    - include: jenkins_job.yml
-      vars:
-        job_name: demo-ansible-deploy-aws
-        job_template: ansible-deploy-aws
-        target_environment_name: demo
-    - include: jenkins_job.yml
-      vars:
-        job_name: demo-ansible-deploy-gce
-        job_template: ansible-deploy-gce
-        target_environment_name: demo
-    - include: jenkins_job.yml
-      vars:
-        job_name: ci-smoke-test-aws
-        job_template: smoke-test
-        platform: "aws"
-        target_environment_name: ci
-        upstream_jobs:
-        - "ci-ansible-deploy-aws"
-    - include: jenkins_job.yml
-      vars:
-        job_name: ci-smoke-test-gce
-        job_template: smoke-test
-        platform: "gce"
-        target_environment_name: ci
-        upstream_jobs:
-        - "ci-ansible-deploy-gce"
-    - include: jenkins_job.yml
-      vars:
-        job_name: demo-smoke-test-aws
-        job_template: smoke-test
-        platform: "aws"
-        target_environment_name: demo
-        build_interval: "H/2 * * * *"
-        email_notification_address: "multi-cloud-paas-demo@digital.cabinet-office.gov.uk"
-    - include: jenkins_job.yml
-      vars:
-        job_name: demo-smoke-test-gce
-        job_template: smoke-test
-        platform: "gce"
-        target_environment_name: demo
-        build_interval: "H/2 * * * *"
-        email_notification_address: "multi-cloud-paas-demo@digital.cabinet-office.gov.uk"
-    - include: jenkins_job.yml
-      vars:
-        job_name: suspend-aws-environments
-        job_template: suspend-environments
-        platform: "aws"
-        exclude_env: "demo ci trial"
-        cron_suspend_time: "0 19 * * *"
-    - include: jenkins_job.yml
-      vars:
-        job_name: suspend-gce-environments
-        job_template: suspend-environments
-        platform: "gce"
-        exclude_env: "demo ci trial"
-        cron_suspend_time: "0 19 * * *"
     - include: jenkins_job.yml
       vars:
         job_name: stage-trial-cf-deploy-aws
@@ -374,33 +232,11 @@
       when: deployer_key is defined
       notify:
         - generate pub key
-    - name: deploy gce credentials
-      template: src=templates/gce_account.json.j2 dest=/var/lib/jenkins/.account.json
-      when: gce_account is defined
     - name: deploy aws credentials
       copy: content="{{ aws_credentials }}" dest=/var/lib/jenkins/.aws_credentials
       when: aws_credentials is defined
-    - name: deploy tsuru credentials
-      copy: content="{{ tsuru_credentials }}" dest=/var/lib/jenkins/.tsuru_credentials
-      when: tsuru_credentials is defined
     - name: disable global ssh strict hostname checking
       lineinfile: dest=/etc/ssh/ssh_config state=present regexp='^StrictHostKeyChecking' line='StrictHostKeyChecking no'
-    - name: create secrets.py file
-      copy:
-        content: "{{ secrets_py  }}"
-        dest: /var/lib/jenkins/.secrets.py
-        owner: jenkins
-        group: jenkins
-        mode: 0600
-      when: secrets_py is defined
-    - name: create gce account certificate file
-      copy:
-        content: "{{ gce_account_certificate_pem  }}"
-        dest: /var/lib/jenkins/.gce_account.pem
-        owner: jenkins
-        group: jenkins
-        mode: 0600
-      when: gce_account_certificate_pem is defined
     - name: copy bash_gpg
       copy: src=files/.bash_gpg dest=/var/lib/jenkins/.bash_gpg
     - name: create jenkins gnupg hidden directory
