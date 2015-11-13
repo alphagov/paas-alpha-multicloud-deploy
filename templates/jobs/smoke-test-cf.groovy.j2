@@ -26,6 +26,11 @@ job('{{ job_name }}') {
     {% if build_interval is defined %}
       cron("{{ build_interval }}")
     {% endif %}
+    {% if upstream_jobs is defined %}
+    {% for upstream_job in upstream_jobs %}
+      upstream('{{ upstream_job }}','SUCCESS')
+    {% endfor %}
+    {% endif %}
   }
 
   wrappers {

@@ -320,13 +320,14 @@
         job_template: smoke-test-cf
         target_environment_name: stage-trial
         platform: aws
-        downstream_parameterized_trigger_job: trial-cf-deploy-aws
     - include: jenkins_job.yml
       vars:
         job_name: trial-cf-deploy-aws
         job_template: cf-deploy
         target_environment_name: trial
         platform: aws
+        upstream_jobs:
+        - "stage-trial-cf-smoke-test-aws"
         downstream_parameterized_trigger_job: trial-cf-smoke-test-aws
     - include: jenkins_job.yml
       vars:
