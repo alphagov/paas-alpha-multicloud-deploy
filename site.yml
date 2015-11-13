@@ -204,11 +204,6 @@
         view_template: environment-view
     - include: jenkins_view.yml
       vars:
-        environment_regex: '^demo-.*'
-        view_name: demo
-        view_template: environment-view
-    - include: jenkins_view.yml
-      vars:
         environment_regex: '^trial-.*'
         view_name: trial
         view_template: environment-view
