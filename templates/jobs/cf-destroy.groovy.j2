@@ -30,16 +30,11 @@ job('{{ job_name }}') {
 shell('''#!/bin/bash
 
 echo Set-up ssh keys and credentials
-mkdir -p gce/ssh aws/ssh
-cp ~/.ssh/* gce/ssh
+mkdir -p aws/ssh
 cp ~/.ssh/* aws/ssh
-cp ~/.account.json gce/account.json
 . ~/.aws_credentials
 export TF_VAR_AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
 export TF_VAR_AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-export TF_VAR_GCE_INTEROPERABILITY_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-export TF_VAR_GCE_INTEROPERABILITY_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-export TF_VAR_GCE_INTEROPERABILITY_HOST=s3-eu-west-1.amazonaws.com
 
 echo Setting up ssh-agent and cleanup trap
 eval $(ssh-agent) && ssh-add ~/.ssh/insecure-deployer
