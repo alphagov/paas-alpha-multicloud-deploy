@@ -326,6 +326,7 @@
         job_template: cf-deploy
         target_environment_name: trial
         platform: aws
+        extra_options: "WEB_ACCESS_CIDRS=0.0.0.0/0"
         upstream_jobs:
         - "stage-trial-cf-smoke-test-aws"
         downstream_parameterized_trigger_job: trial-cf-smoke-test-aws
