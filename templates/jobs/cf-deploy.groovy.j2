@@ -8,6 +8,8 @@ job('{{ job_name }}') {
             "Select which environment you wish to run against")
     stringParam("REF_NAME", "{{ reference_name }}",
             "Select which branch or tag you wish to use")
+    stringParam("EXTRA_OPTIONS", "{{ extra_options | default('') }}",
+            "Extra options to pass to the make command")
   }
   scm {
     git {
@@ -62,7 +64,7 @@ echo Retrieving Terraform state
 ln -sf ~/${DEPLOY_ENV}_{{ platform }}.tfstate {{ platform }}/${DEPLOY_ENV}.tfstate
 ln -sf ~/${DEPLOY_ENV}_{{ platform }}.tfstate.backup {{ platform }}/${DEPLOY_ENV}.tfstate.backup
 
-make {{ platform }} DEPLOY_ENV=${DEPLOY_ENV} ROOT_PASS_DIR=jenkins
+make {{ platform }} DEPLOY_ENV=${DEPLOY_ENV} ROOT_PASS_DIR=jenkins ${EXTRA_OPTIONS}
 ''')
   }
 
