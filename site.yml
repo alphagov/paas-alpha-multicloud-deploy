@@ -329,6 +329,7 @@
         upstream_jobs:
         - "stage-trial-cf-smoke-test-aws"
         downstream_parameterized_trigger_job: trial-cf-smoke-test-aws
+        deploy_trial_ssl_certificates: true
     - include: jenkins_job.yml
       vars:
         job_name: trial-cf-smoke-test-aws

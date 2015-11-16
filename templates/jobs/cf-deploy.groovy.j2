@@ -67,7 +67,12 @@ echo Retrieving Terraform state
 ln -sf ~/${DEPLOY_ENV}_{{ platform }}.tfstate {{ platform }}/${DEPLOY_ENV}.tfstate
 ln -sf ~/${DEPLOY_ENV}_{{ platform }}.tfstate.backup {{ platform }}/${DEPLOY_ENV}.tfstate.backup
 
+{% if deploy_trial_ssl_certificates is defined %}
+make {{ platform }}-trial DEPLOY_ENV=${DEPLOY_ENV} ROOT_PASS_DIR=jenkins
+{% else %}
 make {{ platform }} DEPLOY_ENV=${DEPLOY_ENV} ROOT_PASS_DIR=jenkins
+{% endif %}
+
 ''')
   }
 
