@@ -69,7 +69,7 @@ export TF_VAR_AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
 echo Setting up ssh-agent and cleanup trap
 eval $(ssh-agent) && ssh-add ~/.ssh/insecure-deployer
 set -e
-trap "kill ${SSH_AGENT_PID}" ERR
+trap "ssh-agent -k" EXIT
 
 echo Retrieving Terraform state
 ln -sf ~/${DEPLOY_ENV}_{{ platform }}.tfstate {{ platform }}/${DEPLOY_ENV}.tfstate
