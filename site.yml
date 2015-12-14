@@ -75,6 +75,7 @@
         - gnupg-agent
         - pwgen
         - pinentry-curses
+        - ntp
     - name: Test if pass is installed
       shell: /usr/bin/pass --version || echo pass not installed
       register: pass_version
