@@ -1,3 +1,9 @@
+# DEPRECATED
+
+This repository is no longer maintained. It was used for an alpha project by
+the Government PaaS team. You can follow what we're doing now at
+[alphagov/paas-cf](https://github.com/alphagov/paas-cf).
+
 # multicloud-deploy
 
 Ansible project to create and maintain a [Jenkins](https://jenkins-ci.org/)
